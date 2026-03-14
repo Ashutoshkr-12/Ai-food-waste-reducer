@@ -27,14 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en" className={cn("font-sans", notoSans.variable)}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-      <ClerkProvider>
         {children}
-      </ClerkProvider>
       </body>
     </html>
+    </ClerkProvider>
   );
 }

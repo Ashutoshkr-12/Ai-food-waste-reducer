@@ -1,5 +1,12 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey, DateTime
-from datetime import datetime
+from sqlalchemy import (
+    Column,
+    Integer,
+    Text,
+    ForeignKey,
+    DateTime,
+)
+from datetime import datetime, timezone
+
 from app.config.db import Base
 
 
@@ -8,9 +15,34 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-    recipe_id = Column(Integer, ForeignKey("community_recipes.id"))
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=False,
+        index=True,
+    )
 
-    content = Column(Text)
+    recipe_id = Column(
+        Integer,
+        ForeignKey("community_recipes.id"),
+        nullable=False,
+        index=True,
+    )
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    content = Column(
+        Text,
+        nullable=False,
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import select
+from sqlalchemy import select, desc
 
 from app.config.db import get_db
 from app.models.community_recipe import CommunityRecipe
@@ -12,7 +12,8 @@ from app.schemas.community_schema import (
 
 router = APIRouter()
 
-#* create community recipe
+
+# create recipe
 @router.post(
     "/",
     response_model=CommunityRecipeResponse,
@@ -24,8 +25,13 @@ async def create_recipe(
 ):
     try:
 
+        user_id = 1  # TODO auth later
+
         recipe = CommunityRecipe(
             **data.model_dump(),
+            user_id=user_id,
+            likes_count=0,
+            comments_count=0,
         )
 
         db.add(recipe)
@@ -34,10 +40,6 @@ async def create_recipe(
 
         return recipe
 
-    except HTTPException as e:
-        await db.rollback()
-        raise e
-
     except SQLAlchemyError:
         await db.rollback()
         raise HTTPException(
@@ -45,14 +47,15 @@ async def create_recipe(
             detail="Database error while creating recipe",
         )
 
-    except Exception as e:
+    except Exception:
         await db.rollback()
         raise HTTPException(
             status_code=500,
             detail="Unexpected error",
         )
 
-#* Get all
+
+# get all recipes
 @router.get(
     "/",
     response_model=list[CommunityRecipeResponse],
@@ -63,15 +66,14 @@ async def get_recipes(
     try:
 
         result = await db.execute(
-            select(CommunityRecipe)
+            select(CommunityRecipe).order_by(
+                desc(CommunityRecipe.created_at)
+            )
         )
 
         recipes = result.scalars().all()
 
         return recipes
-
-    except HTTPException as e:
-        raise e
 
     except SQLAlchemyError:
         raise HTTPException(

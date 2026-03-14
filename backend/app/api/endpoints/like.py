@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import SQLAlchemyError
+
 from app.config.db import get_db
 from app.models.recipe_likes import RecipeLike
+from app.models.community_recipe import CommunityRecipe
 from app.schemas.like_schema import LikeCreate
+
 router = APIRouter()
 
 
@@ -14,39 +17,70 @@ async def like_recipe(
     db: AsyncSession = Depends(get_db),
 ):
     try:
+
+        user_id = 1  # TODO auth later
+
+        # check recipe exists
+        recipe_result = await db.execute(
+            select(CommunityRecipe).where(
+                CommunityRecipe.id == data.recipe_id
+            )
+        )
+
+        recipe = recipe_result.scalar_one_or_none()
+
+        if not recipe:
+            raise HTTPException(
+                status_code=404,
+                detail="Recipe not found",
+            )
+
+        # check already liked
         result = await db.execute(
             select(RecipeLike).where(
-                RecipeLike.user_id == data.user_id,
+                RecipeLike.user_id == user_id,
                 RecipeLike.recipe_id == data.recipe_id,
             )
         )
-        existingLike = result.scalar_one_or_none()
 
-        if existingLike:
+        existing_like = result.scalar_one_or_none()
+
+        if existing_like:
             raise HTTPException(
                 status_code=400,
-                detail="Already liked"
+                detail="Already liked",
             )
+
         like = RecipeLike(
-        user_id=data.user_id,
-        recipe_id=data.recipe_id,
+            user_id=user_id,
+            recipe_id=data.recipe_id,
         )
+
         db.add(like)
+
+        # increase count
+        recipe.likes_count += 1
+
         await db.commit()
-        await db.refresh(like)
 
         return {
-            "message":"Liked",
-            "Like_id":like.id
+            "message": "Liked",
+            "likes_count": recipe.likes_count,
         }
-    except HTTPException as e:
+
+    except HTTPException:
+        raise
+
+    except SQLAlchemyError:
+        await db.rollback()
         raise HTTPException(
             status_code=500,
-            detail=getattr(e,"Unable to like the post")
+            detail="Database error",
         )
-    except SQLAlchemyError as e:
+
+    except Exception:
+        await db.rollback()
         raise HTTPException(
             status_code=500,
-            detail=getattr(e,"unable to add the like in db")
+            detail="Unexpected error",
         )
-    

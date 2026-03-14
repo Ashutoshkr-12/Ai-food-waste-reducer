@@ -1,9 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import select
 
 from app.config.db import get_db
 from app.models.comments import Comment
+from app.models.community_recipe import CommunityRecipe
 from app.schemas.comment_schema import CommentCreate
 
 router = APIRouter()
@@ -15,27 +17,51 @@ async def add_comment(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-        comment = Comment(**data.model_dump())
+
+        user_id = 1  # TODO auth later
+
+        # check recipe exists
+        result = await db.execute(
+            select(CommunityRecipe).where(
+                CommunityRecipe.id == data.recipe_id
+            )
+        )
+
+        recipe = result.scalar_one_or_none()
+
+        if not recipe:
+            raise HTTPException(
+                status_code=404,
+                detail="Recipe not found",
+            )
+
+        comment = Comment(
+            user_id=user_id,
+            recipe_id=data.recipe_id,
+            content=data.content,
+        )
 
         db.add(comment)
+
+        # update count
+        recipe.comments_count += 1
+
         await db.commit()
         await db.refresh(comment)
 
-        return comment
+        return {
+            "message": "Comment added",
+            "comments_count": recipe.comments_count,
+        }
 
-    except IntegrityError:
-        # foreign key error / duplicate / constraint error
-        await db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid comment data",
-        )
+    except HTTPException:
+        raise
 
     except SQLAlchemyError:
         await db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Database error while adding comment",
+            status_code=500,
+            detail="Database error",
         )
 
     except Exception:
