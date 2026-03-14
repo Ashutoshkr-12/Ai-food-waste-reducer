@@ -12,6 +12,7 @@ class FridgeItemResponse(BaseModel):
     id: int
     name: str
     quantity: int
+    source: str
     expiry_date: datetime
 
     class Config:
