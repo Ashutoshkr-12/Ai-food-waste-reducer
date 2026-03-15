@@ -6,11 +6,11 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 async def suggest_recipes(items):
 
-    names = [i.names for i in items]
+    names = [i.name for i in items]
 
     prompt = f"""
 You are a cooking assistant.
@@ -28,7 +28,7 @@ Return JSON:
 "title": "",
 "ingrediant":[],
 "steps":[],
-"time":[]
+"time":""
 }}]
  """
     
