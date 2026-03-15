@@ -1,21 +1,22 @@
-# app/schemas/scan_schema.py
-
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
+from datetime import date
+
+
+class ScanItem(BaseModel):
+    name: str
+    quantity: int
+    expiry_date: date
 
 
 class ScanCreate(BaseModel):
     image_url: str
 
 
-class ScanResult(BaseModel):
-    ingredients: List[str]
-
-
 class ScanResponse(BaseModel):
     id: int
     image_url: str
-    scan_result: list[str]
+    scan_result: List[ScanItem]
 
     class Config:
         from_attributes = True

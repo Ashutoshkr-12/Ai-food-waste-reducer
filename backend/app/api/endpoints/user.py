@@ -8,7 +8,6 @@ from app.schemas.user_schema import UserResponse
 
 router = APIRouter()
 
-
 @router.post("/", response_model=UserResponse)
 # async def create_user(
 #     data: UserCreate,
@@ -43,10 +42,19 @@ router = APIRouter()
 async def get_or_create_user(
     clerk_id: str,
     email: str,
-    db: AsyncSession,
+    db: AsyncSession = Depends(get_db)
 ):
     try:
 
+        alreadyExists = await db.execute(select(User).where(User.email == email))
+        existingUser = alreadyExists.scalar_one_or_none()
+
+        if existingUser:
+            raise HTTPException(
+                status_code=400,
+                detail="Email already registered"
+            )
+        
         result = await db.execute(
             select(User).where(User.clerk_id == clerk_id)
         )
@@ -80,7 +88,7 @@ async def get_or_create_user(
             status_code=500,
             detail="Unexpected error while creating user ",
         )
-    
+
 # @router.get("/{user_id}")
 # async def get_user(
 #     user_id: int,

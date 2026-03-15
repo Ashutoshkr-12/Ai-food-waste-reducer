@@ -6,3 +6,5 @@ sqlalchemy
 asyncpg
 psycopg2-binary
 apscheduler
+google-generativeai
+python-multipart

@@ -21,6 +21,5 @@ async def mark_expired_items():
             i.status = "expired"
 
         await db.commit()
-        await db.refresh()
 
         print("expiry jon ran")

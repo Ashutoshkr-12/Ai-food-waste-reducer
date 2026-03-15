@@ -5,11 +5,8 @@ from sqlalchemy import select
 
 from app.config.db import get_db
 from app.models.fridge_items import FridgeItem
-from app.schemas.fridge_schema import (
-    FridgeItemCreate,
-    FridgeItemsCreate,
-    FridgeItemResponse,
-)
+from app.schemas.fridge_schema import FridgeItemsCreate, FridgeItemResponse
+
 
 router = APIRouter()
 
@@ -35,7 +32,8 @@ async def save_items(
                 name=item.name,
                 quantity=item.quantity,
                 expiry_date=item.expiry_date,
-                source="scan",
+                source=item.source or "manual",
+                scan_id=item.scan_id if item.scan_id else None,
                 status="active",
             )
 
