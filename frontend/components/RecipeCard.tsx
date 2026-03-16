@@ -13,7 +13,7 @@ export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardPro
   const isCommunityRecipe = 'author' in recipe;
 
   return (
-    <Link href={`/recipe/${recipe.id}`}>
+    <Link href={`/recipe-detail/${recipe.id}`}>
       <div className="group bg-[#FFFCF8] rounded-[2rem] overflow-hidden shadow-xl border-2 border-gray-100 hover:shadow-2xl hover:border-emerald-200">
         <div className="relative h-52 overflow-hidden">
           <img 

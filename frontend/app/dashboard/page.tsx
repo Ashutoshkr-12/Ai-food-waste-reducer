@@ -65,7 +65,7 @@ export default function Dashboard() {
       <div className="max-w-md mx-auto px-4 -mt-8">
         {/* Quick Actions Grid with Beautiful Color Blends */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <Link href="/scanFridge">
+          <Link href="/scan-fridge">
             <div className="group relative bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 rounded-[2rem] p-7 shadow-xl border-2 border-white hover:shadow-2xl overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-emerald-200/50 to-transparent rounded-full blur-2xl" />
               <div className="relative z-10">
@@ -78,7 +78,7 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          <Link href="/recipeSuggestions">
+          <Link href="/recipe-suggestions">
             <div className="group relative bg-linear-to-br from-purple-50 via-pink-50 to-rose-50 rounded-[2rem] p-7 shadow-xl border-2 border-white hover:shadow-2xl overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-purple-200/50 to-transparent rounded-full blur-2xl" />
               <div className="relative z-10">
@@ -91,7 +91,7 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          <Link href="/saveExpiring">
+          <Link href="/save-expiring">
             <div className="group relative bg-linear-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-[2rem] p-7 shadow-xl border-2 border-white hover:shadow-2xl overflow-hidden">
               <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-amber-200/50 to-transparent rounded-full blur-2xl" />
               <div className="relative z-10">
@@ -134,7 +134,7 @@ export default function Dashboard() {
                   <p className="text-red-50 mb-5 text-lg">
                     {expiringIngredients.length} ingredients need attention - cook them today!
                   </p>
-                  <Link href="/saveExpiring">
+                  <Link href="/save-expiring">
                     <Button className="w-full bg-[#FFFCF8] text-red-600 hover:bg-red-50 rounded-[1.25rem] font-bold h-14 shadow-xl text-lg">
                       Save Food Now →
                     </Button>
@@ -154,7 +154,7 @@ export default function Dashboard() {
               </div>
               <h2 className="font-bold text-xl text-gray-900">My Fridge</h2>
             </div>
-            <Link href="/myFridge" className="text-sm font-bold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+            <Link href="/my-fridge" className="text-sm font-bold bg-linear-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
               View All →
             </Link>
           </div>
@@ -209,7 +209,7 @@ export default function Dashboard() {
               </div>
               <h3 className="font-bold mb-2 text-xl">Fresh Garden Salad</h3>
               <p className="text-purple-100 text-sm mb-4 font-medium">Uses 4 of your ingredients</p>
-              <Link href="/recipes">
+              <Link href="/recipe-suggestions">
                 <Button className="bg-[#FFFCF8] text-purple-600 hover:bg-purple-50 rounded-xl font-bold px-5 h-11 shadow-xl">
                   View Recipe →
                 </Button>
@@ -221,7 +221,7 @@ export default function Dashboard() {
         {/* Eco Tip with linear */}
         <div className="bg-linear-to-br from-lime-50 via-green-50 to-emerald-50 rounded-[2rem] p-7 border-2 border-green-200 shadow-xl">
           <div className="flex items-start gap-5">
-            <div className="w-14 h-14 rounded-[1.25rem] bg-linear-to-br from-emerald-400 to-green-600 flex items-center justify-center flex-shrink-0 shadow-xl">
+            <div className="w-14 h-14 rounded-[1.25rem] bg-linear-to-br from-emerald-400 to-green-600 flex items-center justify-center shrink-0 shadow-xl">
               <Leaf className="w-7 h-7 text-white" />
             </div>
             <div>

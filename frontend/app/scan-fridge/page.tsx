@@ -1,12 +1,12 @@
+'use client'
 import { useState } from 'react';
 import { Camera, Upload, Loader2, Check } from 'lucide-react';
-
 import Header  from '@/components/Header';
 import BottomNav  from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
-export function ScanFridge() {
+export default function ScanFridge(){
   const navigate = useRouter();
   const [isScanning, setIsScanning] = useState(false);
   const [scannedItems, setScannedItems] = useState<string[]>([]);

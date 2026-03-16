@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Camera, Sparkles, ChefHat, Users, Leaf, TrendingDown, Award, ArrowRight, CheckCircle2, Star } from 'lucide-react';
 import Link from "next/link";
 import { Button } from '../components/ui/button';
@@ -312,25 +311,25 @@ export default function Home() {
             <div>
               <h4 className="font-bold mb-4 bg-linear-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">Product</h4>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-emerald-400">Features</a></li>
-                <li><a href="#" className="hover:text-emerald-400">Pricing</a></li>
-                <li><a href="#" className="hover:text-emerald-400">FAQ</a></li>
+                <li><Link href="#" className="hover:text-emerald-400">Features</Link></li>
+                <li><Link href="#" className="hover:text-emerald-400">Pricing</Link></li>
+                <li><Link href="#" className="hover:text-emerald-400">FAQ</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold mb-4 bg-linear-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">Company</h4>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-emerald-400">About</a></li>
-                <li><a href="#" className="hover:text-emerald-400">Blog</a></li>
-                <li><a href="#" className="hover:text-emerald-400">Careers</a></li>
+                <li><Link href="#" className="hover:text-emerald-400">About</Link></li>
+                <li><Link href="#" className="hover:text-emerald-400">Blog</Link></li>
+                <li><Link href="#" className="hover:text-emerald-400">Careers</Link></li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold mb-4 bg-linear-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">Support</h4>
               <ul className="space-y-3 text-gray-400">
-                <li><a href="#" className="hover:text-emerald-400">Help</a></li>
-                <li><a href="#" className="hover:text-emerald-400">Contact</a></li>
-                <li><a href="#" className="hover:text-emerald-400">Privacy</a></li>
+                <li><Link href="#" className="hover:text-emerald-400">Help</Link></li>
+                <li><Link href="#" className="hover:text-emerald-400">Contact</Link></li>
+                <li><Link href="#" className="hover:text-emerald-400">Privacy</Link></li>
               </ul>
             </div>
           </div>

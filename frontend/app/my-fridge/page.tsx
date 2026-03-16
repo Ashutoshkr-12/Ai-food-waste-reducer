@@ -1,6 +1,6 @@
+'use client'
 import { useState } from 'react';
 import { Plus, Search, SlidersHorizontal } from 'lucide-react';
-
 import  Header  from '@/components/Header';
 import  BottomNav from '@/components/BottomNav';
 import  IngredientCard  from '@/components/IngredientCard';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { mockIngredients } from '@/data/mockData';
 import Link from 'next/link';
 
-export function MyFridge() {
+export default function MyFridge() {
   const [filter, setFilter] = useState<'all' | 'expiring'>('all');
   
   const filteredIngredients = filter === 'expiring' 
