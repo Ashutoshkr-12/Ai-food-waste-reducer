@@ -6,9 +6,10 @@ export async function apiFetch(
     url: string,
     options?: RequestInit
 ){
-    const {getToken} = await auth();
+    const session = await auth() ;
 
-    const token = await getToken();
+    const token = await session.getToken();
+    //console.log('token from frontEnd:',token)
 
     const res = await fetch(
         `${BACKEND_URL}${url}`,

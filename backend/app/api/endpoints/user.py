@@ -22,7 +22,7 @@ async def create_user(
     )
 
 @router.get("/me")
-async def get_current_user(
+async def get_me(
     clerk = Depends(get_current_clerkUser),
     db: AsyncSession = Depends(get_db),
 ):
@@ -30,22 +30,24 @@ async def get_current_user(
        
         user = await get_current_user(
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"],
+            email=None,
             db=db,
         )
 
         return user
-
+    
     except HTTPException:
         raise
 
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
+        print("SQLERROR in fetching user",e)
         raise HTTPException(
             status_code=500,
             detail="Database error while fetching user",
         )
 
-    except Exception:
+    except Exception as e:
+        print("Exception in fetching user",e)
         raise HTTPException(
             status_code=500,
             detail="Unexpected error while fetching me",

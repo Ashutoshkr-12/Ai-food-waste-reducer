@@ -33,16 +33,17 @@ async def get_current_clerkUser(
             issuer=ISSUER,
             options={"verify_aud": False}
         )
+        # print("payload from backend:",payload)
 
         clerk_id = payload.get("sub")
         email = None
 
-        if "email_addresses" in payload:
-            email = payload["email_addressed"]
+        # if "email_addresses" in payload:
+        #     email = payload["email_addresses"][0]["email_address"]
 
-            return {
+        return {
                 "clerk_id": clerk_id,
-                "email": email
+                # "email": email
             }
         
     except Exception as e:

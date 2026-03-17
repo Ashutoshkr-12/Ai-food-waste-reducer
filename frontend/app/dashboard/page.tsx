@@ -1,13 +1,14 @@
-'use client'
 import { Camera, Sparkles, AlertCircle, Users, TrendingDown, Leaf, ChefHat, Clock, Star } from 'lucide-react';
 import  BottomNav  from '@/components/BottomNav';
 import { Button } from '@/components/ui/button'
 import { mockIngredients, userStats } from '@/data/mockData'
 import Link from 'next/link';
+import { getMe } from '@/lib/api/user';
 
-export default function Dashboard() {
+
+export default async function Dashboard() {
   const expiringIngredients = mockIngredients.filter(i => i.expiresIn <= 2);
-
+  const user: any = getMe();
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 pb-24">
       {/* Beautiful Header with Color Blend */}
@@ -22,7 +23,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold mb-1">FridgeWise</h1>
-              <p className="text-emerald-100">Welcome back! 👋</p>
+              <p className="text-emerald-100">Welcome {user.email}! 👋</p>
             </div>
             <Link href="/profile">
               <button className="w-14 h-14 rounded-[1.25rem] bg-[#FFFCF8]/20 backdrop-blur-md border-2 border-[#FFFCF8]/30 flex items-center justify-center shadow-xl hover:bg-[#FFFCF8]/30">

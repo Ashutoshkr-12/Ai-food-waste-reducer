@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from '../components/ui/button';
 
 export default function Home() {
+
   
   const features = [
     {
@@ -111,14 +112,14 @@ export default function Home() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col gap-4">
-              <Link href="/dashboard">
+              <Link href="/sign-up">
                 <Button className="w-full h-16 text-lg font-bold bg-linear-to-r from-emerald-500 via-green-500 to-teal-500 hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 text-white rounded-[1.5rem] shadow-xl">
                   <Camera className="w-6 h-6 mr-2" />
                   Get Started Free
                   <ArrowRight className="w-6 h-6 ml-2" />
                 </Button>
               </Link>
-              <Link href="/recipes">
+              <Link href="/recipe-suggestions">
                 <Button variant="outline" className="w-full h-16 text-lg font-bold border-3 bg-[#FFFCF8]/80 backdrop-blur-sm border-emerald-300 text-emerald-700 hover:bg-emerald-50 rounded-[1.5rem] shadow-lg">
                   <Sparkles className="w-6 h-6 mr-2" />
                   Explore Recipes
