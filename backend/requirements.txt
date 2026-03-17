@@ -2,9 +2,11 @@ fastapi
 uvicorn
 pydantic
 python-dotenv
-#SQLAlchemy
+SQLAlchemy
 asyncpg
 psycopg2-binary
 apscheduler
 google-generativeai
 python-multipart
+python-jose
+httpx

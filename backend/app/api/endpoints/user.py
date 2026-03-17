@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.config.db import get_db
 from app.models.users import User
 from app.schemas.user_schema import UserResponse
-
+from app.services.auth.clerk_auth import get_current_clerkUser 
 router = APIRouter()
 
 @router.post("/", response_model=UserResponse)
@@ -45,15 +45,6 @@ async def get_or_create_user(
     db: AsyncSession = Depends(get_db)
 ):
     try:
-
-        alreadyExists = await db.execute(select(User).where(User.email == email))
-        existingUser = alreadyExists.scalar_one_or_none()
-
-        if existingUser:
-            raise HTTPException(
-                status_code=400,
-                detail="Email already registered"
-            )
         
         result = await db.execute(
             select(User).where(User.clerk_id == clerk_id)
@@ -108,16 +99,14 @@ async def get_or_create_user(
     
 @router.get("/me")
 async def get_current_user(
+    clerk = Depends(get_current_clerkUser),
     db: AsyncSession = Depends(get_db),
 ):
     try:
-
-        clerk_id = "test_clerk_id"  # TODO from Clerk
-        email = "test@mail.com"
-
+       
         user = await get_or_create_user(
-            clerk_id=clerk_id,
-            email=email,
+            clerk_id=clerk["clerk_id"],
+            email=clerk["email"],
             db=db,
         )
 

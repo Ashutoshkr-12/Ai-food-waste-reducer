@@ -5,6 +5,9 @@ from app.config.db import engine
 from app.models.users import Base
 from fastapi.middleware.cors import CORSMiddleware
 from app.services.jobs.scheduler import start_scheduler, stop_scheduler
+import os
+
+FRONTEND_URI = os.getenv("FRONTEND_URL")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = ["*"]  # allow all (dev only)
+origins = [FRONTEND_URI] # allow all (dev only)
 
 app.add_middleware(
     CORSMiddleware,
