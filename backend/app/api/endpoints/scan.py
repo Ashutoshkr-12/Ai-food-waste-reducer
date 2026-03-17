@@ -7,6 +7,8 @@ from app.models.scan_result import IngredientScan
 from app.schemas.scan_schema import ScanResponse
 
 from app.services.gemini.gemini_scan import detect_items
+from app.services.auth.clerk_auth import get_current_clerkUser
+from app.services.auth.user_service import get_current_user
 
 router = APIRouter()
 
@@ -15,6 +17,7 @@ router = APIRouter()
 async def create_scan(
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
+    clerk=Depends(get_current_clerkUser)
 ):
     try:
 
@@ -30,10 +33,14 @@ async def create_scan(
                 detail="No items detected",
             )
 
-        user_id = 1  # TODO auth later
+        user = await get_current_user(
+            db=db,
+            clerk_id=clerk["clerk_id"],
+            email=clerk["email"],
+        )
 
         scan = IngredientScan(
-            user_id=user_id,
+            user_id=user.id,
             image_url= file.filename,
             scan_result=detected_items,
         )

@@ -7,18 +7,24 @@ from app.config.db import get_db
 from app.models.recipe_likes import RecipeLike
 from app.models.community_recipe import CommunityRecipe
 from app.schemas.like_schema import LikeCreate
+from app.services.auth.user_service import get_current_user
+from app.services.auth.clerk_auth import get_current_clerkUser
+
 
 router = APIRouter()
-
 
 @router.post("/")
 async def like_recipe(
     data: LikeCreate,
     db: AsyncSession = Depends(get_db),
+    clerk=Depends(get_current_clerkUser),
 ):
     try:
 
-        user_id = 1  # TODO auth later
+        user = await get_current_user(
+            clerk_id=clerk["clerk_id"],
+            email=clerk["email"]
+        )
 
         # check recipe exists
         recipe_result = await db.execute(
@@ -38,7 +44,7 @@ async def like_recipe(
         # check already liked
         result = await db.execute(
             select(RecipeLike).where(
-                RecipeLike.user_id == user_id,
+                RecipeLike.user_id == user.id,
                 RecipeLike.recipe_id == data.recipe_id,
             )
         )
@@ -52,7 +58,7 @@ async def like_recipe(
             )
 
         like = RecipeLike(
-            user_id=user_id,
+            user_id=user.id,
             recipe_id=data.recipe_id,
         )
 

@@ -2,6 +2,7 @@ from sqlalchemy import select
 from datetime import date
 from app.config.db import SessionLocal
 from app.models.fridge_items import FridgeItem
+from app.services.user_stats.stats_service import increase_waste_reduced
 
 async def mark_expired_items():
     async with SessionLocal() as db:
@@ -20,6 +21,10 @@ async def mark_expired_items():
         for i in items:
             i.status = "expired"
 
+            await increase_waste_reduced(
+                db,
+                user_id=i.user_id
+            )
         await db.commit()
 
         print("expiry jon ran")

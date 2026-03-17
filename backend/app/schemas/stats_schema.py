@@ -3,8 +3,8 @@ from pydantic import BaseModel
 
 class UserStatsResponse(BaseModel):
     food_saved: float
-    recipes_cooked: int
-    waste_reduced_percentage: float
+    items_added: int
+    waste_reduced: float
 
     class Config:
         from_attributes = True

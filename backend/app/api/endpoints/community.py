@@ -9,6 +9,8 @@ from app.schemas.community_schema import (
     CommunityRecipeCreate,
     CommunityRecipeResponse,
 )
+from app.services.auth.clerk_auth import get_current_clerkUser
+from app.services.auth.user_service import get_current_user
 
 router = APIRouter()
 
@@ -22,14 +24,19 @@ router = APIRouter()
 async def create_recipe(
     data: CommunityRecipeCreate,
     db: AsyncSession = Depends(get_db),
+    clerk=Depends(get_current_clerkUser)
 ):
     try:
 
-        user_id = 1  # TODO auth later
+        user = await get_current_user(
+            clerk_id=clerk["clerk_id"],
+            email=clerk["email"]
+        )
+        
 
         recipe = CommunityRecipe(
             **data.model_dump(),
-            user_id=user_id,
+            user_id=user.id,
             likes_count=0,
             comments_count=0,
         )

@@ -7,18 +7,23 @@ from app.config.db import get_db
 from app.models.comments import Comment
 from app.models.community_recipe import CommunityRecipe
 from app.schemas.comment_schema import CommentCreate
+from app.services.auth.clerk_auth import get_current_clerkUser
+from app.services.auth.user_service import get_current_user
 
 router = APIRouter()
-
 
 @router.post("/")
 async def add_comment(
     data: CommentCreate,
     db: AsyncSession = Depends(get_db),
+    clerk=Depends(get_current_clerkUser)
 ):
     try:
 
-        user_id = 1  # TODO auth later
+        user = await get_current_user(
+            clerk_id=clerk["clerk_id"],
+            email=clerk["email"]
+        )
 
         # check recipe exists
         result = await db.execute(
@@ -36,7 +41,7 @@ async def add_comment(
             )
 
         comment = Comment(
-            user_id=user_id,
+            user_id=user.id,
             recipe_id=data.recipe_id,
             content=data.content,
         )

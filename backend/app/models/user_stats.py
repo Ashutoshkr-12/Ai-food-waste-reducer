@@ -10,5 +10,5 @@ class UserStats(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     food_saved = Column(Float, default=0)
-    recipes_cooked = Column(Integer, default=0)
-    waste_reduced_percentage = Column(Float, default=0)
+    items_added = Column(Integer, default=0)
+    waste_reduced = Column(Float, default=0)
