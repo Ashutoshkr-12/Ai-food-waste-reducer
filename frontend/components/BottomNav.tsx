@@ -9,8 +9,8 @@ export default function BottomNav() {
   
   const navItems = [
     { path: '/dashboard', icon: Home, label: 'Home' },
-    { path: '/scanFridge', icon: Camera, label: 'Scan' },
-    { path: '/recipeDetail', icon: BookOpen, label: 'Recipes' },
+    { path: '/scan-fridge', icon: Camera, label: 'Scan' },
+    { path: '/recipe-detail', icon: BookOpen, label: 'Recipes' },
     { path: '/community', icon: Users, label: 'Community' },
     { path: '/profile', icon: User, label: 'Profile' }
   ];
