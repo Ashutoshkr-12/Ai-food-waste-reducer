@@ -12,7 +12,6 @@ from app.services.auth.user_service import get_current_user
 
 router = APIRouter()
 
-
 @router.post("/", response_model=ScanResponse)
 async def create_scan(
     file: UploadFile = File(...),
@@ -23,25 +22,23 @@ async def create_scan(
 
         image_bytes = await file.read()
 
-        detected_items = await detect_items(
-            image_bytes
-        )
+        detected_items = await detect_items(image_bytes)
 
         if not detected_items:
             raise HTTPException(
                 status_code=400,
-                detail="No items detected",
+                detail="No items detected please try again",
             )
 
         user = await get_current_user(
             db=db,
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"],
+            
         )
 
         scan = IngredientScan(
             user_id=user.id,
-            image_url= file.filename,
+            image_url=file.filename,
             scan_result=detected_items,
         )
 
@@ -51,18 +48,22 @@ async def create_scan(
 
         return scan
 
-    except SQLAlchemyError:
+    except HTTPException:
+        raise
+
+    except SQLAlchemyError as e:
         await db.rollback()
+        print(e)
         raise HTTPException(
             status_code=500,
-            detail="Scan failed",
+            detail="Database error during scan",
         )
+
 
     except Exception as e:
         await db.rollback()
         print(e)
-
         raise HTTPException(
             status_code=500,
-            detail="Unexpected error",
+            detail=str(e), 
         )

@@ -1,5 +1,6 @@
 'use client'
-import { ReactHTMLElement, useState } from 'react';
+import { useState } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import { Camera, Upload, Loader2, Check } from 'lucide-react';
 import Header  from '@/components/Header';
 import BottomNav  from '@/components/BottomNav';
@@ -7,42 +8,42 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { scanFridge } from '@/lib/api/scan';
 import Image from 'next/image';
+import { apiFetch } from '@/lib/api/client';
 
 export default function ScanFridge(){
   const navigate = useRouter();
-  const [file,setFile] = useState< File | null>(null)
-  const [preview, setPreview] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [preview , setPreview] = useState< string | null>(null)
   const [scannedItems, setScannedItems] = useState<string[]>([]);
   const [hasScanned, setHasScanned] = useState(false);
+  const [scanId, setScanId] = useState< number | null >(null);
+  const [error, setError] = useState("")
+  const {getToken} = useAuth();
 
-const handleFile = (file: File | null) => {
-   console.log(URL.createObjectURL(file!))
-   setFile(file);
-   if (file) {
-    setIsScanning(true);
-     setPreview(URL.createObjectURL(file));
-   }
-}
-
-  const handleScan = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setHasScanned(false);
     
-    // Simulate AI scanning
-    setTimeout(() => {
-      setScannedItems([
-        'Cherry Tomatoes',
-        'Spinach',
-        'Chicken Breast',
-        'Mozzarella Cheese',
-        'Bell Peppers',
-        'Mushrooms',
-        'Avocado'
-      ]);
+    const selectedFile = e.target.files?.[0]
+
+    if(!selectedFile) return;
+    const url = URL.createObjectURL(selectedFile)
+    setPreview(url);
+    setIsScanning(true);
+    setHasScanned(false);
+
+    try {
+      const token = await getToken();
+      const data = await scanFridge(selectedFile, token as string)
+      
+      console.log("data:",data)
+    } catch (err: any) {
+      setError(err.message)
+      // console.log("error in fetching scan-data:",error.message)
+    }finally{
       setIsScanning(false);
       setHasScanned(true);
-    }, 3000);
+    }
+    
   };
 
   const handleAddToFridge = () => {
@@ -80,7 +81,7 @@ const handleFile = (file: File | null) => {
               capture="environment"
               placeholder='Take Photo'
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={e => handleFile(e.target.files ? e.target.files[0] : null)}
+              onChange={handleScan}
               />
                </Button>
             
@@ -93,13 +94,16 @@ const handleFile = (file: File | null) => {
                 <input 
                 type='file'
                 accept='image/*'
-                onChange={e => handleFile(e.target.files ? e.target.files[0] : null)}
+                onChange={handleScan}
                 className='absolute inset-0 opacity-0 w-full h-full cursor-pointer '
                 />
               </Button>
             </div>
           </div>
         )}
+        {error && <div className='w-full h-full text-red-500 font-bold text-xl'>
+           {error}
+            </div> }
 
         {/* Scanning Animation */}
         {isScanning && (

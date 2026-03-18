@@ -6,7 +6,6 @@ from app.models.user_stats import UserStats
 async def get_current_user(
     db,
     clerk_id,
-    email,
 ):
 
     result = await db.execute(
@@ -20,7 +19,6 @@ async def get_current_user(
 
     user = User(
         clerk_id=clerk_id,
-        email=email,
     )
 
     db.add(user)

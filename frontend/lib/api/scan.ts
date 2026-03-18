@@ -1,11 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
+import { error } from "console";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!
 
-export async function scanFridge(file: File){
-    const { getToken } = await auth();
-
-    const token = await getToken();
+export async function scanFridge(file: File, token: string){
 
     const formData = new FormData();
     formData.append("file",file);
@@ -19,6 +16,11 @@ export async function scanFridge(file: File){
             body: formData,
         }
     )
+    if(!res.ok){
+        const errorData = await res.json();
+        throw new Error(errorData.detail || "Error from scan api");   
+    }
 
-    return res.json();
+    return res.json()
+
 }
