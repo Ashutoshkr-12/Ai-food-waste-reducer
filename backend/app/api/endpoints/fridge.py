@@ -43,6 +43,7 @@ async def save_items(
                 source=item.source or "manual",
                 scan_id=item.scan_id if item.scan_id else None,
                 status="active",
+                image_url=item.image_url,
             )
 
             db.add(db_item)

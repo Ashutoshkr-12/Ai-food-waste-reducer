@@ -10,6 +10,7 @@ class FridgeItemCreate(BaseModel):
 
     source: Optional[str] = "manual"
     scan_id: Optional[int] = None
+    image_url: str | None = None
 
 
 class FridgeItemsCreate(BaseModel):
@@ -24,6 +25,7 @@ class FridgeItemResponse(BaseModel):
     expiry_date: date
     source: str
     status: str
+    image_url: str | None
 
     scan_id: Optional[int]
 

@@ -59,3 +59,5 @@ class FridgeItem(Base):
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
+
+    image_url = Column(String, nullable=True)

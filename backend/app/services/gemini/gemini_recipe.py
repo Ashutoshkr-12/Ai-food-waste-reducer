@@ -15,23 +15,32 @@ async def suggest_recipes(items):
     prompt = f"""
 You are a cooking assistant.
 
-Ingrediants:
+Ingredients:
 {names}
 
-Priority ingrediants are first.
+Priority ingredients are first.
 
-Suggest 3 recipes that i can make in 10 minutes, 20 minutes and 30 minutes.
-Return JSON:
+Suggest 3 recipes.
+
+Each recipe must include:
+- title
+- ingredients
+- steps
+- time_minutes
+- image_url (real food image url from internet)
+
+Return ONLY JSON.
 
 [
-{{
-"title": "",
-"ingrediant":[],
-"steps":[],
-"time":""
-}}]
- """
-    
+  {{
+    "title": "",
+    "ingredients": [],
+    "steps": [],
+    "time_minutes": 10,
+    "image_url": ""
+  }}
+]
+"""
     response = model.generate_content(prompt)
 
     text = response.text.replace("```json","").replace("```","").strip()

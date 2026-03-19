@@ -1,53 +1,54 @@
-'use client'
-import { useState } from 'react';
-import { useAuth } from '@clerk/nextjs';
-import { Camera, Upload, Loader2, Check } from 'lucide-react';
-import Header  from '@/components/Header';
-import BottomNav  from '@/components/BottomNav';
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
-import { scanFridge } from '@/lib/api/scan';
-import Image from 'next/image';
-import { apiFetch } from '@/lib/api/client';
+"use client";
+import { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
+import { Camera, Upload, Loader2, Check } from "lucide-react";
+import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { scanFridge } from "@/lib/api/scan";
+import Image from "next/image";
+import { ScanItem } from "@/lib/types/types";
 
-export default function ScanFridge(){
+export default function ScanFridge() {
   const navigate = useRouter();
   const [isScanning, setIsScanning] = useState(false);
-  const [preview , setPreview] = useState< string | null>(null)
-  const [scannedItems, setScannedItems] = useState<string[]>([]);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [scannedItems, setScannedItems] = useState<ScanItem[]>([]);
   const [hasScanned, setHasScanned] = useState(false);
-  const [scanId, setScanId] = useState< number | null >(null);
-  const [error, setError] = useState("")
-  const {getToken} = useAuth();
+  const [scanId, setScanId] = useState<number | null>(null);
+  const [error, setError] = useState("");
+  const { getToken } = useAuth();
 
   const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    
-    const selectedFile = e.target.files?.[0]
 
-    if(!selectedFile) return;
-    const url = URL.createObjectURL(selectedFile)
+    const selectedFile = e.target.files?.[0];
+
+    if (!selectedFile) return;
+    const url = URL.createObjectURL(selectedFile);
     setPreview(url);
     setIsScanning(true);
     setHasScanned(false);
 
     try {
       const token = await getToken();
-      const data = await scanFridge(selectedFile, token as string)
-      
-      console.log("data:",data)
+      const data = await scanFridge(selectedFile, token as string);
+      if (data) {
+        setScannedItems(data.scan_result);
+      }
+      console.log("data:", data.scan_result);
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message);
       // console.log("error in fetching scan-data:",error.message)
-    }finally{
+    } finally {
       setIsScanning(false);
       setHasScanned(true);
     }
-    
   };
 
   const handleAddToFridge = () => {
-    navigate.push('/my-fridge');
+    navigate.push("/my-fridge");
   };
 
   return (
@@ -61,7 +62,7 @@ export default function ScanFridge(){
             <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
               <Camera className="w-12 h-12 text-green-600" />
             </div>
-            
+
             <h2 className="text-xl font-semibold text-neutral-900 mb-2">
               Scan Your Fridge
             </h2>
@@ -70,46 +71,43 @@ export default function ScanFridge(){
             </p>
 
             <div className="flex flex-col gap-3">
-              <Button
-              className="w-full h-12 bg-green-600 hover:bg-green-700 rounded-full"
-              >
-               <Camera className="w-5 h-5 mr-2" />
+              <Button className="w-full h-12 bg-green-600 hover:bg-green-700 rounded-full">
+                <Camera className="w-5 h-5 mr-2" />
                 Take Photo
-              <input 
-               type='file'
-              accept='image/*'
-              capture="environment"
-              placeholder='Take Photo'
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={handleScan}
-              />
-               </Button>
-            
-              <Button 
-                variant="outline" 
-                className="w-full h-12 rounded-full"
-              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  placeholder="Take Photo"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  onChange={handleScan}
+                />
+              </Button>
+
+              <Button variant="outline" className="w-full h-12 rounded-full">
                 <Upload className="w-5 h-5 mr-2" />
                 Upload Image
-                <input 
-                type='file'
-                accept='image/*'
-                onChange={handleScan}
-                className='absolute inset-0 opacity-0 w-full h-full cursor-pointer '
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleScan}
+                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer "
                 />
               </Button>
             </div>
           </div>
         )}
-        {error && <div className='w-full h-full text-red-500 font-bold text-xl'>
-           {error}
-            </div> }
+        {error && (
+          <div className="w-full h-full text-red-500 font-bold text-xl">
+            {error}
+          </div>
+        )}
 
         {/* Scanning Animation */}
         {isScanning && (
           <div className="bg-white rounded-3xl p-8 text-center">
             <div className="relative w-64 h-64 mx-auto mb-6">
-              <Image 
+              <Image
                 src={preview ? preview : ""}
                 alt="Scanning"
                 width={64}
@@ -125,7 +123,7 @@ export default function ScanFridge(){
                 AI Scanning in Progress...
               </span>
             </div>
-            
+
             <p className="text-neutral-600">
               Detecting ingredients and analyzing freshness
             </p>
@@ -143,38 +141,68 @@ export default function ScanFridge(){
                 <h2 className="text-lg font-semibold text-neutral-900">
                   {scannedItems.length} Items Detected
                 </h2>
-                <p className="text-sm text-neutral-600">Review and edit below</p>
+                <p className="text-sm text-neutral-600">
+                  Review and edit below
+                </p>
               </div>
             </div>
 
             <div className="space-y-3 mb-6">
               {scannedItems.map((item, index) => (
-                <div 
+                <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-neutral-50 rounded-xl"
+                  className="p-4 bg-neutral-50 rounded-xl space-y-2"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
-                      <span className="text-xl">
-                        {item.includes('Tomato') ? '🍅' :
-                         item.includes('Spinach') ? '🥬' :
-                         item.includes('Chicken') ? '🍗' :
-                         item.includes('Cheese') ? '🧀' :
-                         item.includes('Pepper') ? '🫑' :
-                         item.includes('Mushroom') ? '🍄' :
-                         item.includes('Avocado') ? '🥑' : '🥗'}
-                      </span>
-                    </div>
-                    <span className="font-medium text-neutral-900">{item}</span>
-                  </div>
-                  <button className="text-sm text-green-600 hover:text-green-700">
-                    Edit
-                  </button>
+                  {/* name */}
+                  <input
+                    className="w-full border rounded-lg px-3 py-2"
+                    value={item.name}
+                    onChange={(e) => {
+                      const updated = [...scannedItems];
+                      updated[index].name = e.target.value;
+                      setScannedItems(updated);
+                    }}
+                  />
+
+                  {/* quantity */}
+                  <input
+                    type="number"
+                    className="w-full border rounded-lg px-3 py-2"
+                    value={item.quantity}
+                    onChange={(e) => {
+                      const updated = [...scannedItems];
+                      updated[index].quantity = Number(e.target.value);
+                      setScannedItems(updated);
+                    }}
+                  />
+
+                  {/* expiry */}
+                  <input
+                    type="date"
+                    className="w-full border rounded-lg px-3 py-2"
+                    value={item.expiry_date}
+                    onChange={(e) => {
+                      const updated = [...scannedItems];
+                      updated[index].expiry_date = e.target.value;
+                      setScannedItems(updated);
+                    }}
+                  />
+
+                  {/* image */}
+                  {item.image_url && (
+                    <Image
+                      src={item.image_url}
+                      width={16}
+                      height={16}
+                      className="w-16 h-16 rounded-lg object-cover"
+                      alt="img"
+                    />
+                  )}
                 </div>
               ))}
             </div>
 
-            <Button 
+            <Button
               onClick={handleAddToFridge}
               className="w-full h-12 bg-green-600 hover:bg-green-700 rounded-full"
             >

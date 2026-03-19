@@ -7,6 +7,7 @@ class ScanItem(BaseModel):
     name: str
     quantity: int
     expiry_date: date
+    image_url: str | None = None
 
 
 class ScanCreate(BaseModel):
