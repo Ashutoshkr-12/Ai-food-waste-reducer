@@ -16,11 +16,16 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**',
       },
-      // 2. Accepts HTTP links with any subdomain
       {
         protocol: 'http',
         hostname: '**',
        
+      },
+      {
+      protocol: 'https',
+        hostname: 'img.spoonacular.com',
+        port: '',
+        pathname: '/**', 
       },
       
     ]

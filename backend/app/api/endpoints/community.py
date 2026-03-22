@@ -14,8 +14,6 @@ from app.services.auth.user_service import get_current_user
 
 router = APIRouter()
 
-
-# create recipe
 @router.post(
     "/",
     response_model=CommunityRecipeResponse,
@@ -30,7 +28,6 @@ async def create_recipe(
 
         user = await get_current_user(
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"]
         )
         
 
@@ -62,7 +59,6 @@ async def create_recipe(
         )
 
 
-# get all recipes
 @router.get(
     "/",
     response_model=list[CommunityRecipeResponse],

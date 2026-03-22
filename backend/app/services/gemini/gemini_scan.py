@@ -1,14 +1,18 @@
 import google.generativeai as genai
 import os
 import json
+import urllib.parse
 from typing import List, Dict
 from datetime import date
 
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+IMAGEKIT_ID = os.getenv("IMAGEKIT_ID") 
 
 genai.configure(api_key=GEMINI_API_KEY)
-
 model = genai.GenerativeModel("gemini-2.5-flash")
+
+today = date.today().isoformat()
 
 def clean_string(value):
     if not value:
@@ -17,17 +21,22 @@ def clean_string(value):
         return value.strip().strip('"').strip("'")
     return value
 
-today = date.today().isoformat()
+def get_imagekit_url(item_name: str) -> str:
+    if not item_name:
+        return ""
+    
+    safe_name = urllib.parse.quote(item_name)
+    
+    return f"https://ik.imagekit.io/{IMAGEKIT_ID}/tr:w-300,h-300/ik-genimg-prompt-{safe_name}"
 
 
+# 3. Main Detect Items Function
 async def detect_items(
-        image_bytes:  bytes,
+        image_bytes: bytes,
 ) -> List[dict]:
     
     try:
-
         prompt = f"""
-
 You are an AI that detects food items from a fridge image.
 
 Today's exact date is: {today}
@@ -52,7 +61,8 @@ Format:
 ]
 Return only JSON.
 """
-        response = model.generate_content(
+      
+        response = await model.generate_content_async(
             [
                 prompt,
                 {
@@ -63,33 +73,30 @@ Return only JSON.
         )
 
         text = response.text.strip()
-
         text = text.replace("```json", "").replace("```","").strip()
-
         textData = json.loads(text)
 
         if not isinstance(textData, list):
             return []
         
-        data =[]
-
+        data = []
+        
         for item in textData:
             name = clean_string(item.get("name"))
             quantity = item.get("quantity", 1)
             expiry_date = clean_string(item.get("expiry_date"))
-            image_url = clean_string(item.get("image_url"))
+            
+            imagekit_url = get_imagekit_url(name)
+            
+            data.append({
+                "name": name,
+                "quantity": quantity,
+                "expiry_date": expiry_date,
+                "image_url": imagekit_url,
+            })
 
-            data.append(
-                {
-                    "name": name,
-                    "quantity": quantity,
-                    "expiry_date": expiry_date,
-                    "image_url": image_url,
-                }
-            )
-        
         return data
 
     except Exception as e:
-        print("Gemini error:",e)
+        print("Gemini or Processing error:", e)
         return []
