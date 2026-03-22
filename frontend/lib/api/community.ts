@@ -1,3 +1,4 @@
+"use client"
 import { apiFetch } from "./client";
 
 export async function getCommunity() {

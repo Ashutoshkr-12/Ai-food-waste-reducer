@@ -6,6 +6,7 @@ import BottomNav  from '@/components/BottomNav';
 import RecipeCard  from '@/components/RecipeCard';
 import { Button } from '@//components/ui/button';
 import { mockCommunityRecipes } from '@/data/mockData';
+import ShareRecipe from '@/components/ShareRecipe';
 
 export default function Community() {
   const [filter, setFilter] = useState<'trending' | 'recent' | 'following'>('trending');
@@ -16,21 +17,7 @@ export default function Community() {
 
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Hero Banner */}
-        <div className="bg-linear-to-br from-purple-600 to-purple-700 text-white rounded-2xl p-5 mb-6">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-              <Users className="w-5 h-5" />
-            </div>
-            <h2 className="font-semibold text-lg">Share & Discover</h2>
-          </div>
-          <p className="text-purple-100 text-sm mb-4">
-            Join our community of food waste warriors. Share your recipes and learn from others!
-          </p>
-          <Button className="bg-white text-purple-600 hover:bg-purple-50 rounded-full">
-            <Plus className="w-4 h-4 mr-2" />
-            Share Your Recipe
-          </Button>
-        </div>
+        <ShareRecipe />
 
         {/* Filter Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide">
@@ -56,17 +43,7 @@ export default function Community() {
             <Clock className="w-4 h-4" />
             Recent
           </button>
-          <button
-            onClick={() => setFilter('following')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              filter === 'following'
-                ? 'bg-purple-600 text-white'
-                : 'bg-white text-neutral-600 border border-neutral-200'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            Following
-          </button>
+         
         </div>
 
         {/* Stats */}

@@ -3,14 +3,14 @@ import {useState } from 'react';
 import { Heart, Share2, Clock, ChefHat, Users, Bookmark } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { mockRecipes, mockCommunityRecipes } from '@/data/mockData';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function RecipeDetail() {
-  const { id }:any = useSearchParams();
+  const { id }:any = useParams();
   const navigate = useRouter();
   const [isSaved, setIsSaved] = useState(false);
 
-  // Find recipe from both sources
+
   const recipe = [...mockRecipes, ...mockCommunityRecipes].find(r => r.id === id);
 
   if (!recipe) {

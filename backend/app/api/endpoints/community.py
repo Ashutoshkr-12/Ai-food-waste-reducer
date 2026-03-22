@@ -25,12 +25,10 @@ async def create_recipe(
     clerk=Depends(get_current_clerkUser)
 ):
     try:
-
         user = await get_current_user(
             clerk_id=clerk["clerk_id"],
         )
         
-
         recipe = CommunityRecipe(
             **data.model_dump(),
             user_id=user.id,
