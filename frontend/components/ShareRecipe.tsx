@@ -26,7 +26,9 @@ export default function ShareRecipe() {
     description: "",
     ingrediants: "",
     steps: "",
+    image: null as File | null
   });
+  const [loading, setLoading] = useState(false);
 
   const handleOnChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -36,36 +38,54 @@ export default function ShareRecipe() {
       ...data,
       [e.target.name]: e.target.value,
     });
-    console.log("ingrediant:",data.steps)
+    // console.log("ingrediant:",data.steps)
   };
 
-  const sendData = async () => {
-    const token: string | null = await getToken();
-    const dataToSend = {
-      title: data.title,
-      description: data.description,
-      ingredients: data.ingrediants.split(",").map(i => i.trim()),
-      steps: data.steps.split(",")
-      .map(s => s.trim()).filter(Boolean),
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
+    if(e.target.files && e.target.files[0]){
+      setData({
+        ...data,
+        image: e.target.files[0],
+      })
     }
-    try {
-      const res = await createRecipe(dataToSend, token!);
-      // console.log("res from the community:", res);
-      
-      if(res){
-        toast.success("Post created")
-        setData({
-          title: "",
-          description: "",
-          ingrediants: "",
-          steps: "",
-        })
-      }
-    } catch (err: any) {
-      toast.error(err ? err.message : "Error in creating post")
-      console.log(err);
-    }
-  };
+  }
+
+const sendData = async () => {
+  setLoading(true)
+  console.log("Data from frontend:",data)
+  const Ingredient = JSON.stringify(data.ingrediants ? data.ingrediants.split(",").map(i => i.trim()).filter(Boolean) : []);
+  const Steps = JSON.stringify(data.steps ? data.steps.split(",").map(s => s.trim()).filter(Boolean) : []);
+  const token = await getToken();
+
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  formData.append("ingredients", Ingredient) 
+  formData.append("steps", Steps );
+
+  if (data.image) {
+    formData.append("image", data.image);
+  }
+
+  try {
+     await createRecipe(formData,token!)
+
+    toast.success("Post created");
+    setData({
+      title: "",
+      description: "",
+      ingrediants: "",
+      steps: "",
+      image: null,
+    });
+
+  } catch (err: any) {
+    console.log(err);
+    toast.error(err.message);
+  }finally{
+    setLoading(false);
+  }
+};
 
   return (
     <div className="bg-linear-to-br from-purple-600 to-purple-700 text-white rounded-2xl p-5 mb-6">
@@ -136,10 +156,15 @@ export default function ShareRecipe() {
             </Field>
             <Field>
               <Label htmlFor="image">Image</Label>
-              <Input id="image" name="image" type="file" />
+              <Input id="image" onChange={handleFileChange} name="image" type="file" />
             </Field>
           </FieldGroup>
-          <Button onClick={sendData}>Share</Button>
+          {loading ? 
+          <Button className="bg-gray-600">sharing...</Button> 
+          : 
+          <Button onClick={sendData}>Share</Button> 
+          }
+          
         </DialogContent>
       </Dialog>
     </div>

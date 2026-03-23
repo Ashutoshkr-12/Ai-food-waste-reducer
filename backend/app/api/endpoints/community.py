@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import UploadFile,Form,File,APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select, desc
-
+import json
 from app.config.db import get_db
 from app.models.community_recipe import CommunityRecipe
 from app.schemas.community_schema import (
@@ -11,7 +11,7 @@ from app.schemas.community_schema import (
 )
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
-
+from app.services.cloudinary.cloudinary import upload_result
 router = APIRouter()
 
 @router.post(
@@ -20,18 +20,33 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
 )
 async def create_recipe(
-    data: CommunityRecipeCreate,
+    title: str = Form(...),
+    description: str = Form(...),
+    ingredients: str = Form(...),
+    steps: str = Form(...),
+    image: UploadFile | None = File(None),
     db: AsyncSession = Depends(get_db),
-    clerk=Depends(get_current_clerkUser)
+    clerk=Depends(get_current_clerkUser),
 ):
     try:
+
         user = await get_current_user(
             db=db,
             clerk_id=clerk["clerk_id"],
         )
-        
+       
+        image_url = None
+        if image:
+            bytes_data = await  image.read()
+
+            image_url = await upload_result(bytes_data,image.filename)
+
         recipe = CommunityRecipe(
-            **data.model_dump(),
+            title=title,
+            description=description,
+            ingredients=json.loads(ingredients),
+            steps=json.loads(steps),
+            image_url=image_url,
             user_id=user.id,
             likes_count=0,
             comments_count=0,
@@ -43,20 +58,10 @@ async def create_recipe(
 
         return recipe
 
-    except SQLAlchemyError:
+    except Exception as e:
         await db.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail="Database error while creating recipe",
-        )
-
-    except Exception:
-        await db.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail="Unexpected error",
-        )
-
+        print(e)
+        raise HTTPException(500, "error")
 
 @router.get(
     "/",
@@ -74,6 +79,13 @@ async def get_recipes(
         )
 
         recipes = result.scalars().all()
+        for r in recipes:
+            if isinstance(r.ingredients, str):
+                r.ingredients = json.loads(r.ingredients)
+
+            if isinstance(r.steps, str):
+                r.steps = json.loads(r.steps)
+
 
         return recipes
 

@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { apiFetch } from "./client";
 
 export async function getFridge() {
@@ -6,7 +7,7 @@ export async function getFridge() {
 
 
 export async function saveFridge(items: any[]) {
-    return apiFetch("/api/fridge", {
+    return apiFetch("/api/fridge",{
         method: "POST",
         body: JSON.stringify({ items }),
     });

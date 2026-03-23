@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus, TrendingUp, Clock, Users } from 'lucide-react';
 import Header  from '@/components/Header';
 import BottomNav  from '@/components/BottomNav';
@@ -7,10 +7,23 @@ import RecipeCard  from '@/components/RecipeCard';
 import { Button } from '@//components/ui/button';
 import { mockCommunityRecipes } from '@/data/mockData';
 import ShareRecipe from '@/components/ShareRecipe';
+import { getCommunityRecipe } from '@/lib/api/community';
 
 export default function Community() {
   const [filter, setFilter] = useState<'trending' | 'recent' | 'following'>('trending');
+  const [data, setData] = useState([]);
+useEffect(()=>{
+  const fetchData = async()=>{
+     const recipes = await getCommunityRecipe()
+     if(recipes){
+      setData(recipes)
+     }
+  }
 
+  fetchData();
+},[])
+
+// console.log("data", data)
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
       <Header title="Community Recipes" showNotifications />
@@ -64,8 +77,8 @@ export default function Community() {
 
         {/* Community Recipes Feed */}
         <div className="space-y-4">
-          {mockCommunityRecipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} showAuthor />
+          {data?.map((recipe: any) => (
+            <RecipeCard key={recipe?.id} recipe={recipe} showAuthor />
           ))}
         </div>
 
