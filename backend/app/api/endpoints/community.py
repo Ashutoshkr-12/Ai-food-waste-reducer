@@ -26,6 +26,7 @@ async def create_recipe(
 ):
     try:
         user = await get_current_user(
+            db=db,
             clerk_id=clerk["clerk_id"],
         )
         

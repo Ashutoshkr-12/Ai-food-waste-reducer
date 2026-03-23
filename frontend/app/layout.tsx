@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "react-hot-toast";
 
 const notoSans = Noto_Sans({variable:'--font-sans'});
 
@@ -28,6 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider >
+      <Toaster />
     <html lang="en" className={cn("font-sans", notoSans.variable)}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

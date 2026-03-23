@@ -1,14 +1,12 @@
-import { auth } from "@clerk/nextjs/server";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!
 
 export async function apiFetch(
     url: string,
+    token?: string,
     options?: RequestInit
 ){
-    const session = await auth() ;
-
-    const token = await session.getToken();
+    
     //console.log('token from frontEnd:',token)
 
     const res = await fetch(

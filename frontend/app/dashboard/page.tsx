@@ -5,7 +5,6 @@ import { mockIngredients, userStats } from '@/data/mockData'
 import Link from 'next/link';
 import { getMe } from '@/lib/api/user';
 
-
 export default async function Dashboard() {
   const expiringIngredients = mockIngredients.filter(i => i.expiresIn <= 2);
   const user: any = getMe();

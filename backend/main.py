@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from app.api.routes.router import api_router
 from app.config.db import engine
 from app.models.users import Base
@@ -33,5 +35,15 @@ app.add_middleware(
 @app.get('/')
 def root():
     return{"message": "app is running"}
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    print("VALIDATION ERROR:", exc.errors())
+
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()},
+    )
 
 app.include_router(api_router, prefix='/api')
