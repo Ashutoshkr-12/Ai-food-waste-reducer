@@ -14,3 +14,4 @@ cloudinary
 roboflow
 ultralytics
 opencv-python-headless
+numpy

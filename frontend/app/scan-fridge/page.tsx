@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Camera, Upload, Loader2, Check } from "lucide-react";
@@ -8,224 +9,265 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { scanFridge } from "@/lib/api/scan";
 import Image from "next/image";
-import { ScanItem } from "@/lib/types/types";
+
+type Detection = {
+  quantity?: number;
+  item: string;
+  confidence?: number;
+  bbox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+};
 
 export default function ScanFridge() {
   const navigate = useRouter();
-  const [isScanning, setIsScanning] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [scannedItems, setScannedItems] = useState<ScanItem[]>([]);
-  const [hasScanned, setHasScanned] = useState(false);
-  const [scanId, setScanId] = useState<number | null>(null);
-  const [error, setError] = useState("");
   const { getToken } = useAuth();
 
-  const handleScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
+  const [isScanning, setIsScanning] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [annotated, setAnnotated] = useState<string | null>(null);
+  const [items, setItems] = useState<Detection[]>([]);
+  const [hasScanned, setHasScanned] = useState(false);
+  const [error, setError] = useState("");
 
-    const selectedFile = e.target.files?.[0];
+  const mergeDuplicates = (detections: any[]) => {
+    const map: any = {};
 
-    if (!selectedFile) return;
-    const url = URL.createObjectURL(selectedFile);
+    detections.forEach((d) => {
+      const name = d.item;
+      if(!map[name]){
+        map[name] = {
+          ...d,
+          quantity: 0,
+        }
+      }
+      map[name].quantity +=1;
+
+    });
+    return Object.values(map);
+  }
+
+  const addItem = () => {
+  setItems((prev) => [
+    ...prev,
+    {
+      item: "",
+      confidence: 0,
+      quantity: 1,
+    },
+  ]);
+};
+
+  const handleScan = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setError("");
+    setHasScanned(false);
+    setAnnotated(null);
+
+    const url = URL.createObjectURL(file);
     setPreview(url);
     setIsScanning(true);
-    setHasScanned(false);
 
     try {
       const token = await getToken();
-      const data = await scanFridge(selectedFile, token as string);
-      if (data) {
-        setScannedItems(data.scan_result.detections);
+
+      const data = await scanFridge(
+        file,
+        token as string
+      );
+
+      console.log("API:", data);
+
+      const merged = mergeDuplicates(data.detections) as Detection[]
+      setItems(merged || []);
+
+      if (data.annotated_image) {
+        setAnnotated(
+          `data:image/jpeg;base64,${data.annotated_image}`
+        );
       }
-      console.log("data:", data.scan_result.detections);
     } catch (err: any) {
       setError(err.message);
-      // console.log("error in fetching scan-data:",error.message)
     } finally {
       setIsScanning(false);
       setHasScanned(true);
     }
   };
 
-  const handleAddToFridge = () => {
-    navigate.push("/my-fridge");
+  const updateItem = (
+    index: number,
+    field: string,
+    value: any
+  ) => {
+    const updated = [...items];
+    // @ts-ignore
+    updated[index][field] = value;
+    setItems(updated);
   };
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
       <Header title="Scan Fridge" showBack />
-
       <div className="max-w-md mx-auto px-4 py-6">
-        {/* Upload Area */}
+        {/* upload */}
         {!hasScanned && !isScanning && (
           <div className="bg-white rounded-3xl p-8 border-2 border-dashed border-neutral-300 text-center mb-6">
             <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
               <Camera className="w-12 h-12 text-green-600" />
             </div>
-
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+            <h2 className="text-xl font-semibold mb-2">
               Scan Your Fridge
             </h2>
-            <p className="text-neutral-600 mb-6">
-              Take a photo of your fridge and let AI detect all ingredients
-            </p>
-
             <div className="flex flex-col gap-3">
-              <Button className="w-full h-12 bg-green-600 hover:bg-green-700 rounded-full">
-                <Camera className="w-5 h-5 mr-2" />
+              <Button className="relative">
                 Take Photo
                 <input
                   type="file"
                   accept="image/*"
                   capture="environment"
-                  placeholder="Take Photo"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="absolute inset-0 opacity-0"
                   onChange={handleScan}
                 />
               </Button>
-
-              <Button variant="outline" className="w-full h-12 rounded-full">
-                <Upload className="w-5 h-5 mr-2" />
+              <Button
+                variant="outline"
+                className="relative"
+              >
                 Upload Image
                 <input
                   type="file"
                   accept="image/*"
+                  className="absolute inset-0 opacity-0"
                   onChange={handleScan}
-                  className="absolute inset-0 opacity-0 w-full h-full cursor-pointer "
                 />
               </Button>
+
             </div>
           </div>
         )}
         {error && (
-          <div className="w-full h-full text-red-500 font-bold text-xl">
+          <div className="text-red-500">
             {error}
           </div>
         )}
-
-        {/* Scanning Animation */}
+        {/* scanning */}
         {isScanning && (
-          <div className="bg-white rounded-3xl p-8 text-center">
+          <div className="bg-white rounded-3xl p-6 text-center">
+
             <div className="relative w-64 h-64 mx-auto mb-6">
+
               <Image
-                src={preview ? preview : ""}
-                alt="Scanning"
-                width={64}
-                height={64}
-                className="w-full h-full object-cover rounded-2xl"
+                src={
+                  annotated
+                    ? annotated
+                    : preview || ""
+                }
+                alt="scan"
+                fill
+                className="object-cover rounded-2xl"
               />
-              <div className="absolute inset-0 bg-green-600/20 rounded-2xl animate-pulse" />
-            </div>
 
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
-              <span className="text-lg font-medium text-neutral-900">
-                AI Scanning in Progress...
-              </span>
-            </div>
+              <div className="absolute inset-0 bg-green-500/20 animate-pulse rounded-2xl" />
 
-            <p className="text-neutral-600">
-              Detecting ingredients and analyzing freshness
-            </p>
+            </div>
+            <Loader2 className="animate-spin mx-auto" />
+            <p>Scanning...</p>
           </div>
         )}
-
-        {/* Results */}
-        {hasScanned && scannedItems.length > 0 && (
-          <div className="bg-white rounded-3xl p-6 border border-neutral-200">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                <Check className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold text-neutral-900">
-                  {scannedItems.length} Items Detected
-                </h2>
-                <p className="text-sm text-neutral-600">
-                  Review and edit below
-                </p>
-              </div>
+        {/* results */}
+        {hasScanned && items.length > 0 && (
+          <div className="bg-white rounded-3xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Check className="text-green-600" />
+              <h2>
+                {items.length} items detected
+              </h2>
             </div>
+            {/* annotated image */}
+            {annotated && (
+              <div className="mb-4">
+                <Image
+                  src={annotated}
+                  alt="annotated"
+                  width={300}
+                  height={300}
+                  className="rounded-xl"
+                />
+              </div>
+            )}
+            {/* edit list */}
+           <div className="space-y-3">
 
-            <div className="space-y-3 mb-6">
-              {scannedItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="p-4 bg-neutral-50 rounded-xl space-y-2"
-                >
-                  {/* name */}
-                  <input
-                    className="w-full border rounded-lg px-3 py-2"
-                    value={item.item}
-                    onChange={(e) => {
-                      const updated = [...scannedItems];
-                      updated[index].name = e.target.value;
-                      setScannedItems(updated);
-                    }}
-                  />
+    {items.map((item, i) => (
 
-                  {/* quantity */}
-                  <input
-                    type="number"
-                    className="w-full border rounded-lg px-3 py-2"
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const updated = [...scannedItems];
-                      updated[index].quantity = Number(e.target.value);
-                      setScannedItems(updated);
-                    }}
-                  />
+    <div
+      key={i}
+      className="p-3 bg-neutral-100 rounded-xl"
+    >
 
-                  {/* expiry */}
-                  <input
-                    type="date"
-                    className="w-full border rounded-lg px-3 py-2"
-                    value={item.expiry_date}
-                    onChange={(e) => {
-                      const updated = [...scannedItems];
-                      updated[index].expiry_date = e.target.value;
-                      setScannedItems(updated);
-                    }}
-                  />
+      <input
+        className="w-full border p-2"
+        value={item.item}
+        onChange={(e) =>
+          updateItem(i, "item", e.target.value)
+        }
+      />
 
-                  {/* image */}
-                  {item.image_url && (
-                    <Image
-                      src={item.image_url}
-                      width={16}
-                      height={16}
-                      className="w-16 h-16 rounded-lg object-cover"
-                      alt="img"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+      <input
+        type="number"
+        className="w-full border p-2 mt-2"
+        value={item.quantity || 1}
+        onChange={(e) =>
+          updateItem(
+            i,
+            "quantity",
+            Number(e.target.value)
+          )
+        }
+      />
+      <input
+      readOnly
+      value={`${Math.round(item.confidence! * 100)}% confident`} 
+      />
 
+    </div>
+
+  ))}
+
+  {/* add button */}
+
+  <button
+    onClick={addItem}
+    className="w-full bg-blue-500 text-white p-2 rounded-xl"
+  >
+    + Add Item
+  </button>
+
+</div>
             <Button
-              onClick={handleAddToFridge}
-              className="w-full h-12 bg-green-600 hover:bg-green-700 rounded-full"
+              className="w-full mt-4"
+              onClick={() =>
+                navigate.push("/my-fridge")
+              }
             >
-              Add to My Fridge
+              Add to fridge
             </Button>
+
           </div>
+
         )}
 
-        {/* Tips */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-2xl p-4">
-          <h3 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-            <span>💡</span> Tips for Better Scanning
-          </h3>
-          <ul className="space-y-1 text-sm text-blue-800">
-            <li>• Ensure good lighting</li>
-            <li>• Include clear view of items</li>
-            <li>• Avoid shadows and reflections</li>
-            <li>• Position camera directly in front</li>
-          </ul>
-        </div>
       </div>
 
       <BottomNav />
+
     </div>
   );
 }

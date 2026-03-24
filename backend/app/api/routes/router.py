@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from app.api.endpoints import user
 from app.api.endpoints import fridge
-from app.api.endpoints import scan
 from app.api.endpoints import community
 from app.api.endpoints import comment
 from app.api.endpoints import like
@@ -13,7 +12,6 @@ api_router = APIRouter()
 
 api_router.include_router(user.router, prefix="/users", tags=["Users"])
 api_router.include_router(fridge.router, prefix="/fridge", tags=["Fridge"])
-api_router.include_router(scan.router, prefix="/scan", tags=["Scan"])
 api_router.include_router(community.router, prefix="/community", tags=["Community"])
 api_router.include_router(comment.router, prefix="/comments", tags=["Comments"])
 api_router.include_router(like.router, prefix="/likes", tags=["Likes"])
