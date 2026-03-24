@@ -1,4 +1,3 @@
-import { error } from "console";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!
 
@@ -8,7 +7,7 @@ export async function scanFridge(file: File, token: string){
     formData.append("file",file);
 
     const res = await fetch(
-        `${BACKEND_URL}/api/scan`,{
+        `${BACKEND_URL}/api/scan-fridge`,{
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`,

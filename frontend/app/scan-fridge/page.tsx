@@ -35,9 +35,9 @@ export default function ScanFridge() {
       const token = await getToken();
       const data = await scanFridge(selectedFile, token as string);
       if (data) {
-        setScannedItems(data.scan_result);
+        setScannedItems(data.scan_result.detections);
       }
-      console.log("data:", data.scan_result);
+      console.log("data:", data.scan_result.detections);
     } catch (err: any) {
       setError(err.message);
       // console.log("error in fetching scan-data:",error.message)
@@ -156,7 +156,7 @@ export default function ScanFridge() {
                   {/* name */}
                   <input
                     className="w-full border rounded-lg px-3 py-2"
-                    value={item.name}
+                    value={item.item}
                     onChange={(e) => {
                       const updated = [...scannedItems];
                       updated[index].name = e.target.value;

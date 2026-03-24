@@ -7,6 +7,7 @@ from app.api.endpoints import comment
 from app.api.endpoints import like
 from app.api.endpoints import stats
 from app.api.endpoints import recipes_suggestion
+from app.api.endpoints import detection
 
 api_router = APIRouter()
 
@@ -18,3 +19,4 @@ api_router.include_router(comment.router, prefix="/comments", tags=["Comments"])
 api_router.include_router(like.router, prefix="/likes", tags=["Likes"])
 api_router.include_router(stats.router, prefix="/stats", tags=["Stats"])
 api_router.include_router(recipes_suggestion.router, prefix="/recipes", tags=["Recipes"],)
+api_router.include_router(detection.router, prefix="/scan-fridge", tags=["Image detection"])

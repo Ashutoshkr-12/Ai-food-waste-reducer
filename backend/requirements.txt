@@ -11,3 +11,6 @@ python-multipart
 python-jose
 httpx
 cloudinary
+roboflow
+ultralytics
+opencv-python-headless

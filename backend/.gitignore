@@ -31,3 +31,26 @@ archive.zip
 .DS_Store
 
 .codspeed
+
+Fridge-Items-*/
+fridge-items-*/
+*.zip
+ 
+runs/
+*.pt
+*.onnx
+*.tflite
+*.torchscript
+*.engine
+ 
+temp_*
+*.jpg.temp
+*.png.temp
+ 
+*.db
+*.sqlite
+*.sqlite3
+ 
+*.log
+logs/
+log/

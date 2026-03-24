@@ -17,8 +17,8 @@ export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardPro
       <div className="group bg-[#FFFCF8] rounded-[2rem] overflow-hidden shadow-xl border-2 border-gray-100 hover:shadow-2xl hover:border-emerald-200">
         <div className="relative h-52 overflow-hidden">
           <img 
-            src={recipe.image} 
-            alt={recipe.name}
+            src={recipe.image_url} 
+            alt={recipe.title}
             className="w-full h-full object-cover group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100" />
@@ -30,30 +30,30 @@ export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardPro
                 Easy
               </span>
             )}
-            {recipe.cookTime <= 30 && (
+            {10 <= 30 && (
               <span className="px-4 py-1.5 bg-linear-to-r from-blue-400 to-cyan-500 text-white text-xs font-bold rounded-full shadow-lg">
                 Quick
               </span>
             )}
           </div>
 
-          {isCommunityRecipe && (
+          {10 <= 30 && (
             <button className="absolute top-4 right-4 p-3 bg-[#FFFCF8]/95 backdrop-blur-sm rounded-2xl hover:bg-[#FFFCF8] shadow-xl">
               <Heart className="w-5 h-5 text-red-500" />
             </button>
           )}
 
           {/* Calorie badge */}
-          {recipe.calories && (
+          {10 <= 30 && (
             <div className="absolute bottom-4 right-4 px-4 py-2 bg-[#FFFCF8]/95 backdrop-blur-sm rounded-2xl shadow-xl">
-              <span className="text-sm font-bold text-gray-900">{recipe.calories} cal</span>
+              <span className="text-sm font-bold text-gray-900">10 cal</span>
             </div>
           )}
         </div>
         
         <div className="p-6">
           <h3 className="font-bold text-gray-900 mb-4 text-xl line-clamp-1 group-hover:bg-linear-to-r group-hover:from-emerald-600 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent">
-            {recipe.name}
+            {recipe.title}
           </h3>
           
           <div className="flex items-center gap-3 text-sm text-gray-600 mb-5">

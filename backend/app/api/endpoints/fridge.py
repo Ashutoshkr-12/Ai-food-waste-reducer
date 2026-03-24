@@ -13,7 +13,6 @@ from app.services.user_stats.stats_service import increase_items_added
 
 router = APIRouter()
 
-
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,

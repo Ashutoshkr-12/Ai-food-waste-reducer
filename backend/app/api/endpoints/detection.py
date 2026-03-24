@@ -1,41 +1,37 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+from app.services.roboflow.detection import detect_food_items
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-
 from app.config.db import get_db
 from app.models.scan_result import IngredientScan
-from app.schemas.scan_schema import ScanResponse
-
-from app.services.gemini.gemini_scan import detect_items
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
 
+
 router = APIRouter()
 
-@router.post("/", response_model=ScanResponse)
-async def create_scan(
+@router.post("/")
+async def detect_food(
     file: UploadFile = File(...),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession =Depends(get_db),
     clerk=Depends(get_current_clerkUser)
 ):
     try:
-
         image_bytes = await file.read()
 
-        detected_items = await detect_items(image_bytes)
-
-        if not detected_items:
+        detected_items = await detect_food_items(image_bytes, file.filename)
+    
+        if not detected_items["detections"]:
             raise HTTPException(
                 status_code=400,
                 detail="No items detected please try again",
             )
-
+        
         user = await get_current_user(
             db=db,
-            clerk_id=clerk["clerk_id"],
-            
+            clerk_id=clerk["clerk_id"]
         )
-
+        
         scan = IngredientScan(
             user_id=user.id,
             image_url=file.filename,
@@ -50,7 +46,6 @@ async def create_scan(
 
     except HTTPException:
         raise
-
     except SQLAlchemyError as e:
         await db.rollback()
         print(e)
