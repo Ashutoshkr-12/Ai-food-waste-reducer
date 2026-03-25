@@ -7,7 +7,7 @@ from app.models.scan_result import IngredientScan
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
 from app.services.gemini.gemini_expiry import get_expiry_dates
-
+from app.services.spooncular.spooncular import get_food_image
 router = APIRouter()
 
 @router.post("/")
@@ -36,9 +36,9 @@ async def detect_food(
 
         for d in detected_items["detections"]:
             name = d["item"]
-
+            img = await get_food_image(name)
             days = expiry_map.get(name, 3)
-
+            d["image_url"] = img
             d["expiry_days"] = days
 
 

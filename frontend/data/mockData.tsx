@@ -1,6 +1,6 @@
 // Mock data for FridgeWise app
 
-export interface Ingredient {
+export interface Ingredientsss {
   id: string;
   name: string;
   quantity: string;
@@ -9,32 +9,7 @@ export interface Ingredient {
   addedDate: string;
 }
 
-export interface Recipe {
-  id: string;
-  name: string;
-  image: string;
-  cookTime: number;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  ingredients: string[];
-  servings: number;
-  calories?: number;
-  likes?: number;
-  comments?: number;
-  author?: string;
-  instructions?: string[];
-  matchPercentage?: number;
-  createdAt?: string;
-}
-
-export interface CommunityRecipe extends Recipe {
-  author: string;
-  authorAvatar?: string;
-  likes: number;
-  comments: number;
-  createdAt: string;
-}
-
-export const mockIngredients: Ingredient[] = [
+export const mockIngredients: Ingredientsss[] = [
   {
     id: '1',
     name: 'Cherry Tomatoes',
@@ -116,6 +91,32 @@ export const mockIngredients: Ingredient[] = [
     addedDate: '2025-12-01'
   }
 ];
+
+
+export interface Recipe {
+  id: string;
+  name: string;
+  image: string;
+  cookTime: number;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  ingredients: string[];
+  servings: number;
+  calories?: number;
+  likes?: number;
+  comments?: number;
+  author?: string;
+  instructions?: string[];
+  matchPercentage?: number;
+  createdAt?: string;
+}
+
+export interface CommunityRecipe extends Recipe {
+  author: string;
+  authorAvatar?: string;
+  likes: number;
+  comments: number;
+  createdAt: string;
+}
 
 export const mockRecipes: Recipe[] = [
   {

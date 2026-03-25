@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Camera, Upload, Loader2, Check } from "lucide-react";
+import { Camera, Loader2, Check } from "lucide-react";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { scanFridge } from "@/lib/api/scan";
 import Image from "next/image";
+import IngredientCard from "@/components/IngredientCard";
 
 type Detection = {
+  image_url: string | undefined;
   expiry_date: any;
   quantity?: number;
   item: string;
@@ -26,7 +28,6 @@ type Detection = {
 export default function ScanFridge() {
   const navigate = useRouter();
   const { getToken } = useAuth();
-  const date = new Date();
   const [isScanning, setIsScanning] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [annotated, setAnnotated] = useState<string | null>(null);
@@ -50,7 +51,6 @@ export default function ScanFridge() {
     return Object.values(map);
   };
 
-
   const addItem = () => {
     setItems((prev) => [
       ...prev,
@@ -58,7 +58,8 @@ export default function ScanFridge() {
         item: "",
         confidence: 0,
         quantity: 1,
-        expiry_date: ""
+        expiry_date: "",
+        image_url: "",
       },
     ]);
   };
@@ -86,24 +87,7 @@ export default function ScanFridge() {
     data.detections
   ) as Detection[];
 
-  const withExpiry = merged.map((item: any) => {
-
-  const base = new Date();
-
-  const days = Math.min(
-    item.expiry_days || 3,
-    30
-  );
-
-  base.setDate(base.getDate() + days);
-
-  return {
-    ...item,
-    expiry_date:
-      base.toISOString().split("T")[0],
-  };
-});
-  setItems(withExpiry || []);
+  setItems(merged || []);
 
   if (data.annotated_image) {
     setAnnotated(
@@ -119,12 +103,39 @@ export default function ScanFridge() {
     }
   };
 
-  const updateItem = (index: number, field: string, value: any) => {
-    const updated = [...items];
-    // @ts-ignore
-    updated[index][field] = value;
-    setItems(updated);
+  const editItem = (
+  index: number,
+  field: string,
+  value: any
+) => {
+
+  const updated = [...items];
+ // @ts-ignore
+  updated[index][field] = value;
+
+  setItems(updated);
+};
+
+function convertToIngredient(item: any) {
+
+  const today = new Date();
+
+  const expiry = new Date(item.expiry_date);
+
+  const diff = Math.ceil(
+    (expiry.getTime() - today.getTime()) /
+    (1000 * 60 * 60 * 24)
+  );
+
+  return {
+    id: item.id,
+    title: item.item,
+    quantity: item.quantity || 1,
+    expiry_date: diff,
+    image_url: item.image_url,
+    confidence: item.confidence,
   };
+}
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
@@ -199,41 +210,13 @@ export default function ScanFridge() {
             )}
             {/* edit list */}
             <div className="space-y-3">
-              {items.map((item, i) => (
-                <div key={i} className="p-3 bg-neutral-100 rounded-xl">
-                  <input
-                    className="w-full border p-2"
-                    value={item.item}
-                    onChange={(e) => updateItem(i, "item", e.target.value)}
-                  />
+              {items.map((item, i) => {
+                const ingredient = convertToIngredient(item);
 
-                  <input
-                    type="number"
-                    className="w-full border p-2 mt-2"
-                    value={item.quantity || 1}
-                    onChange={(e) =>
-                      updateItem(i, "quantity", Number(e.target.value))
-                    }
-                  />
-                  <input
-                    readOnly
-                    value={`${Math.round(item.confidence! * 100)}% confident`}
-                  />
-                 <input
-                    type="date"
-                    className="w-full border p-2 mt-2"
-                    value={item.expiry_date || ""}
-                    onChange={(e) =>
-                      updateItem(
-                        i,
-                        "expiry_date",
-                        e.target.value
-                      )
-                    }
-                  />
-                </div>
-              ))}
-
+                return( 
+                  <IngredientCard key={i} ingredient={ingredient} index={i} onEdit={editItem} />
+                )
+              })}
               {/* add button */}
               <button
                 onClick={addItem}
