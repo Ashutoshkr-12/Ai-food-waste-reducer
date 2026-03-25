@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import { scanFridge } from "@/lib/api/scan";
 import Image from "next/image";
 import IngredientCard from "@/components/IngredientCard";
+import { fetchImage } from "@/lib/api/fetchImage";
+import { useRef } from "react";
 
 type Detection = {
   image_url: string | undefined;
@@ -34,6 +36,8 @@ export default function ScanFridge() {
   const [items, setItems] = useState<Detection[]>([]);
   const [hasScanned, setHasScanned] = useState(false);
   const [error, setError] = useState("");
+  const timerRef = useRef<any>(null);
+
 
   const mergeDuplicates = (detections: any[]) => {
     const map: any = {};
@@ -103,19 +107,38 @@ export default function ScanFridge() {
     }
   };
 
-  const editItem = (
+const editItem = async (
   index: number,
   field: string,
   value: any
 ) => {
 
+  const token = await getToken()
   const updated = [...items];
- // @ts-ignore
+
+  //@ts-ignore
   updated[index][field] = value;
 
   setItems(updated);
-};
 
+  if (field === "item") {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
+    timerRef.current = setTimeout(async () => {
+
+      const img = await fetchImage(value,token!);
+
+      const updated2 = [...items];
+
+      updated2[index].image_url = img;
+
+      setItems(updated2);
+
+    }, 600); 
+  }
+};
 function convertToIngredient(item: any) {
 
   const today = new Date();

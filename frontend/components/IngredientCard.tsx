@@ -60,7 +60,7 @@ export default function IngredientCard({
             <input
               className="font-bold border px-2 rounded-2xl text-gray-900 text-xl mb-2 w-full"
               value={ingredient.title}
-              onChange={(e) => onEdit(index, "name", e.target.value)}
+              onChange={(e) => onEdit(index, "item", e.target.value)}
             />
             <input
               type="number"
