@@ -6,7 +6,7 @@ from app.config.db import get_db
 from app.models.scan_result import IngredientScan
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
-
+from app.services.gemini.gemini_expiry import get_expiry_dates
 
 router = APIRouter()
 
@@ -26,7 +26,22 @@ async def detect_food(
                 status_code=400,
                 detail="No items detected please try again",
             )
-        
+        items_name = [d["item"] for d in detected_items["detections"]]
+        expiry_data = await get_expiry_dates(items_name)
+
+        expiry_map = {
+            e["item"]: e["days"]
+            for e in expiry_data
+        }
+
+        for d in detected_items["detections"]:
+            name = d["item"]
+
+            days = expiry_map.get(name, 3)
+
+            d["expiry_days"] = days
+
+
         user = await get_current_user(
             db=db,
             clerk_id=clerk["clerk_id"]
