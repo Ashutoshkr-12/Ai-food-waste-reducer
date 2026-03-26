@@ -5,15 +5,14 @@ from sqlalchemy import select
 
 from app.config.db import get_db
 from app.models.user_stats import UserStats
-
+from app.schemas.stats_schema import UserStatsResponse
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user 
-
 
 router = APIRouter()
 
 
-@router.get("/me")
+@router.get("/me",response_model=UserStatsResponse)
 async def get_stats(
     db: AsyncSession = Depends(get_db),
     clerk=Depends(get_current_clerkUser),
@@ -22,8 +21,7 @@ async def get_stats(
 
         user = await get_current_user(
             db=db,
-            clerk_id=clerk["clerk_id"],
-            email=clerk["email"],
+            clerk_id=clerk["clerk_id"]
         )
 
         result = await db.execute(

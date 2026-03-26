@@ -109,3 +109,5 @@ async def get_items(
             status_code=500,
             detail="Error fetching fridge items",
         )
+
+

@@ -2,15 +2,16 @@ import { Camera, Sparkles, AlertCircle, Users, TrendingDown, Leaf, ChefHat, Cloc
 import  BottomNav  from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { mockIngredients, userStats } from '@/data/mockData';
-import { getMe } from '@/lib/api/user';
 import Link from 'next/link';
+import { getMe } from '@/lib/api/user';
+import Header from '@/components/Header';
 
 export default function Dashboard() {
   const expiringIngredients = mockIngredients.filter(i => i.expiresIn <= 2);
-  const user: any = getMe()
 
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 pb-24">
+      <Header title='Dashboard' showNotifications />
       {/* Beautiful Header with Color Blend */}
       <header className="relative bg-linear-to-br from-emerald-500 via-green-500 to-teal-600 text-white px-4 pt-14 pb-12 overflow-hidden">
         {/* linear orbs for depth */}

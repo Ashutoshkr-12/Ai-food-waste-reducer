@@ -18,8 +18,8 @@ from datetime import datetime
 
 
 class CommentCreate(BaseModel):
-    recipe_id: int
-    content: str
+    id: int
+    text: str
 
 
 class CommentResponse(BaseModel):

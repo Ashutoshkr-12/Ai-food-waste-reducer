@@ -1,14 +1,118 @@
+"use client"
 import { Settings, Award, BookOpen, Share2, TrendingDown, ChefHat } from 'lucide-react';
-
 import  Header  from '@/components/Header';
 import  BottomNav  from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { userStats, mockRecipes } from '@/data/mockData';
 import Link from 'next/link';
-
+import { useAuth } from '@clerk/nextjs';
+import { getMeStats } from '@/lib/api/stats';
+import { useEffect, useState } from 'react';
+import { User, UserStats } from '@/lib/types/types';
+import { getMe } from '@/lib/api/user';
+import { getMyRecipes } from '@/lib/api/community';
 
 export default function Profile() {
+  const { getToken } = useAuth();
   const savedRecipes = mockRecipes.slice(0, 3);
+  const [stats, setStats] = useState<UserStats>()
+ const [ recipes, setRecipes] = useState([])
+ const [ user,setUser] = useState<User>();
+ const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  if(!loading) return;
+   const getMyStat =async() => {
+    setLoading(true)
+    const token = await getToken()
+    const res = await getMeStats(token!)
+    const user = await getMe(token!);
+    const myRecipes = await getMyRecipes(token!)
+    setRecipes(myRecipes)
+    setStats(res)
+    setUser(user)
+
+    setLoading(false)
+   }
+    getMyStat()
+},[getToken])
+
+if (loading) {
+  return (
+    <div className="min-h-screen bg-neutral-50 pb-20">
+
+      {/* Header skeleton */}
+      <div className="h-16 bg-white border-b animate-pulse" />
+
+      <div className="max-w-md mx-auto px-4 py-6 space-y-6">
+
+        {/* Profile card */}
+        <div className="rounded-3xl p-6 bg-gray-200 animate-pulse h-40" />
+
+        {/* Stats */}
+        <div className="bg-white rounded-3xl p-6 space-y-4">
+
+          <div className="h-5 w-32 bg-gray-200 rounded animate-pulse" />
+
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse" />
+          </div>
+
+        </div>
+
+        {/* Achievements */}
+        <div className="bg-white rounded-3xl p-6">
+
+          <div className="h-5 w-40 bg-gray-200 rounded mb-4 animate-pulse" />
+
+          <div className="grid grid-cols-4 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-16 bg-gray-200 rounded-xl animate-pulse"
+              />
+            ))}
+          </div>
+
+        </div>
+
+
+        {/* Saved recipes skeleton */}
+        <div className="space-y-3">
+
+          <div className="h-5 w-40 bg-gray-200 rounded animate-pulse" />
+
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-24 bg-gray-200 rounded-2xl animate-pulse"
+            />
+          ))}
+
+        </div>
+
+
+        {/* My recipes skeleton */}
+        <div className="space-y-3">
+
+          <div className="h-5 w-40 bg-gray-200 rounded animate-pulse" />
+
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-24 bg-gray-200 rounded-2xl animate-pulse"
+            />
+          ))}
+
+        </div>
+
+      </div>
+
+    </div>
+  )
+}
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
@@ -22,18 +126,18 @@ export default function Profile() {
               👤
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold mb-1">Alex Johnson</h2>
+              <h2 className="text-2xl font-bold mb-1">{user?.clerk_id.slice(0,10)}</h2>
               <p className="text-green-100">Food Waste Warrior 🌱</p>
             </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold">{userStats.recipesCookedCount}</div>
+              <div className="text-2xl font-bold">{recipes.length}</div>
               <div className="text-xs text-green-100 mt-1">Recipes</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold">{userStats.savedRecipesCount}</div>
+              <div className="text-2xl font-bold">0</div>
               <div className="text-xs text-green-100 mt-1">Saved</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
@@ -54,20 +158,29 @@ export default function Profile() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-neutral-600">Food Saved</span>
-                <span className="font-semibold text-neutral-900">{userStats.foodSaved}</span>
+                <span className="font-semibold text-neutral-900">{stats?.food_saved}</span>
               </div>
               <div className="h-3 bg-neutral-100 rounded-full overflow-hidden">
-                <div className="h-full bg-green-600 rounded-full" style={{ width: '75%' }} />
+                <div className="h-full bg-green-600 rounded-full" style={{ width: '0%' }} />
               </div>
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-neutral-600">Waste Reduction</span>
-                <span className="font-semibold text-neutral-900">{userStats.wasteReductionScore}%</span>
+                <span className="font-semibold text-neutral-900">{stats?.waste_reduced}%</span>
               </div>
               <div className="h-3 bg-neutral-100 rounded-full overflow-hidden">
-                <div className="h-full bg-amber-600 rounded-full" style={{ width: '85%' }} />
+                <div className="h-full bg-amber-600 rounded-full" style={{ width: '0%' }} />
+              </div>
+            </div>
+             <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-neutral-600">items saved</span>
+                <span className="font-semibold text-neutral-900">{stats?.items_added}%</span>
+              </div>
+              <div className="h-3 bg-neutral-100 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-600 rounded-full" style={{ width: '0%' }} />
               </div>
             </div>
 
@@ -146,34 +259,58 @@ export default function Profile() {
         </div>
 
         {/* Shared Recipes */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-lg text-neutral-900 flex items-center gap-2">
-              <Share2 className="w-5 h-5" />
-              My Shared Recipes
-            </h3>
-            <button className="text-sm text-green-600 hover:text-green-700">
-              Share New
-            </button>
+       {/* My Shared Recipes */}
+<div className="mb-6">
+
+  <div className="flex items-center justify-between mb-4">
+    <h3 className="font-semibold text-lg text-neutral-900 flex items-center gap-2">
+      <Share2 className="w-5 h-5" />
+      My Shared Recipes
+    </h3>
+  </div>
+
+
+  {recipes.length === 0 && (
+    <p className="text-sm text-gray-400">
+      You haven't shared any recipes yet
+    </p>
+  )}
+
+
+  <div className="grid gap-3">
+
+    {recipes.map((recipe: any) => (
+
+      <Link key={recipe.id} href={`/recipe/${recipe.id}`}>
+
+        <div className="bg-white rounded-2xl overflow-hidden border border-neutral-200 flex gap-3 hover:shadow-lg transition-shadow">
+
+          <img
+            src={recipe.image_url}
+            className="w-24 h-24 object-cover"
+          />
+
+          <div className="flex-1 p-3">
+
+            <h4 className="font-medium text-neutral-900 mb-1">
+              {recipe.title}
+            </h4>
+
+            <div className="text-sm text-neutral-600">
+              ❤️ {recipe.likes_count} • 💬 {recipe.comments_count}
+            </div>
+
           </div>
 
-          <Link href="/community">
-            <div className="bg-linear-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="w-16 h-16 rounded-full bg-purple-600 text-white flex items-center justify-center text-2xl mx-auto mb-3">
-                <ChefHat className="w-8 h-8" />
-              </div>
-              <h4 className="font-semibold text-purple-900 mb-1">
-                Share Your Recipe
-              </h4>
-              <p className="text-sm text-purple-700 mb-4">
-                Help others reduce food waste with your recipes
-              </p>
-              <Button className="bg-purple-600 hover:bg-purple-700 rounded-full">
-                Get Started
-              </Button>
-            </div>
-          </Link>
         </div>
+
+      </Link>
+
+    ))}
+
+  </div>
+
+</div>
 
         {/* Settings Links */}
         <div className="bg-white rounded-3xl border border-neutral-200 overflow-hidden">

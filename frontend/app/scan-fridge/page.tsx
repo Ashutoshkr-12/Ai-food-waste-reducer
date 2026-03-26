@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Camera, Loader2, Check } from "lucide-react";
@@ -118,14 +117,11 @@ const editItem = async (
 
   //@ts-ignore
   updated[index][field] = value;
-
   setItems(updated);
-
   if (field === "item") {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
-
     timerRef.current = setTimeout(async () => {
 
       const img = await fetchImage(value,token!);
@@ -158,6 +154,10 @@ function convertToIngredient(item: any) {
     image_url: item.image_url,
     confidence: item.confidence,
   };
+}
+
+const sendItemToFridge = async() => {
+
 }
 
   return (

@@ -10,7 +10,6 @@ import ShareRecipe from '@/components/ShareRecipe';
 import { getCommunityRecipe } from '@/lib/api/community';
 
 export default function Community() {
-  const [filter, setFilter] = useState<'trending' | 'recent' | 'following'>('trending');
   const [data, setData] = useState([]);
 useEffect(()=>{
   const fetchData = async()=>{
@@ -33,7 +32,7 @@ useEffect(()=>{
         <ShareRecipe />
 
         {/* Filter Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide">
+        {/* <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide">
           <button
             onClick={() => setFilter('trending')}
             className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
@@ -57,16 +56,16 @@ useEffect(()=>{
             Recent
           </button>
          
-        </div>
+        </div> */}
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <div className="bg-white rounded-2xl p-3 border border-neutral-200 text-center">
-            <div className="text-xl font-bold text-neutral-900">1.2K</div>
+            <div className="text-xl font-bold text-neutral-900">{data.length}</div>
             <div className="text-xs text-neutral-600">Recipes</div>
           </div>
           <div className="bg-white rounded-2xl p-3 border border-neutral-200 text-center">
-            <div className="text-xl font-bold text-neutral-900">50K</div>
+            <div className="text-xl font-bold text-neutral-900">8</div>
             <div className="text-xs text-neutral-600">Members</div>
           </div>
           <div className="bg-white rounded-2xl p-3 border border-neutral-200 text-center">

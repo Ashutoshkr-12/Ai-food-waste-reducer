@@ -11,3 +11,8 @@ export async function createRecipe(formData: any, token: string){
         body: formData,
     });
 }
+
+export async function getMyRecipes(token: string) {
+    return apiFetch("/api/my-recipes",token)
+    
+}

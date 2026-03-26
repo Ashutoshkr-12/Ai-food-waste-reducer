@@ -1,5 +1,7 @@
+
 import { apiFetch } from "./client";
 
-export async function getMe() {
-    return apiFetch("/api/users/me")
+export async function getMe(token: string) {
+    
+    return apiFetch("/api/users/me",token)
 }

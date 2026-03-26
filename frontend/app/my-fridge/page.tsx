@@ -19,7 +19,7 @@ export default function MyFridge() {
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
-      <Header title="My Fridge" showBack />
+      <Header title="My Fridge" showNotifications showBack />
 
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Search and Filter */}

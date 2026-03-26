@@ -1,5 +1,5 @@
-import { Clock, ChefHat, Heart, Star } from 'lucide-react';
-import { Recipe, CommunityRecipe } from '@/data/mockData';
+import { Clock, ChefHat, Heart } from 'lucide-react';
+import { Recipe, CommunityRecipe } from '@/lib/types/types';
 import Link from 'next/link';
 
 
@@ -9,8 +9,8 @@ interface RecipeCardProps {
   showAuthor?: boolean;
 }
 
-export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardProps) {
-  const isCommunityRecipe = 'author' in recipe;
+export default function RecipeCard({ recipe, showAuthor = true }: RecipeCardProps) {
+  const isCommunityRecipe = 'author';
 
   return (
     <Link href={`/recipe-detail/${recipe.id}`}>
@@ -30,11 +30,13 @@ export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardPro
                 Easy
               </span>
             )}
-            {10 <= 30 && (
+            {recipe.ingredients.length <= 5 ? (
               <span className="px-4 py-1.5 bg-linear-to-r from-blue-400 to-cyan-500 text-white text-xs font-bold rounded-full shadow-lg">
-                Quick
+                easy
               </span>
-            )}
+            ) : (<span className="px-4 py-1.5 bg-linear-to-r from-blue-400 to-cyan-500 text-white text-xs font-bold rounded-full shadow-lg">
+                Quick
+              </span>)}
           </div>
 
           {10 <= 30 && (
@@ -44,33 +46,33 @@ export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardPro
           )}
 
           {/* Calorie badge */}
-          {10 <= 30 && (
+          {recipe.ingredients.length > 8 ? (
             <div className="absolute bottom-4 right-4 px-4 py-2 bg-[#FFFCF8]/95 backdrop-blur-sm rounded-2xl shadow-xl">
-              <span className="text-sm font-bold text-gray-900">10 cal</span>
+              <span className="text-sm font-bold text-gray-900">550 cal</span>
             </div>
-          )}
+          ) : ( <div className="absolute bottom-4 right-4 px-4 py-2 bg-[#FFFCF8]/95 backdrop-blur-sm rounded-2xl shadow-xl">
+              <span className="text-sm font-bold text-gray-900">280 cal</span>
+            </div>)}
         </div>
         
         <div className="p-6">
           <h3 className="font-bold text-gray-900 mb-4 text-xl line-clamp-1 group-hover:bg-linear-to-r group-hover:from-emerald-600 group-hover:to-green-600 group-hover:bg-clip-text group-hover:text-transparent">
             {recipe.title}
           </h3>
+          <h6 className="font-bold text-gray-700 ml-2 mb-4  line-clamp-2 ">
+            {recipe.description}
+          </h6>
           
           <div className="flex items-center gap-3 text-sm text-gray-600 mb-5">
             <div className="flex items-center gap-2 bg-linear-to-br from-emerald-50 to-green-50 px-4 py-2 rounded-xl border border-emerald-200">
               <Clock className="w-4 h-4 text-emerald-600" />
-              <span className="font-semibold text-gray-700">{recipe.cookTime} min</span>
+              <span className="font-semibold text-gray-700">20 min</span>
             </div>
             <div className="flex items-center gap-2 bg-linear-to-br from-purple-50 to-pink-50 px-4 py-2 rounded-xl border border-purple-200">
               <ChefHat className="w-4 h-4 text-purple-600" />
               <span className="font-semibold text-gray-700">{recipe.difficulty}</span>
             </div>
-            {recipe.servings && (
-              <div className="flex items-center gap-2 bg-linear-to-br from-amber-50 to-orange-50 px-4 py-2 rounded-xl border border-amber-200">
-                <span className="text-amber-600">👥</span>
-                <span className="font-semibold text-gray-700">{recipe.servings}</span>
-              </div>
-            )}
+            
           </div>
 
           {showAuthor && isCommunityRecipe && (
@@ -82,9 +84,9 @@ export default function RecipeCard({ recipe, showAuthor = false }: RecipeCardPro
               <div className="flex items-center gap-4 text-sm">
                 <span className="flex items-center gap-1.5 font-bold bg-linear-to-r from-red-500 to-pink-600 bg-clip-text text-transparent">
                   <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                  {recipe.likes}
+                  {recipe.likes_count}
                 </span>
-                <span className="text-gray-500 font-semibold">💬 {recipe.comments || 'hey'}</span>
+                <span className="text-gray-500 font-semibold">💬 {recipe.comments_count}</span>
               </div>
             </div>
           )}

@@ -1,7 +1,7 @@
 import { apiFetch } from "./client";
 
-export async function getMeStats() {
-    return apiFetch("/api/stats/me");
+export async function getMeStats(token: string) {
+    return apiFetch("/api/stats/me",token);
 }
 
 export async function getUserStats(id: string){

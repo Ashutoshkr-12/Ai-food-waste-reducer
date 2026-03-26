@@ -6,7 +6,7 @@ from sqlalchemy import select
 from app.config.db import get_db
 from app.models.comments import Comment
 from app.models.community_recipe import CommunityRecipe
-from app.schemas.comment_schema import CommentCreate
+from app.schemas.comment_schema import CommentCreate,CommentResponse
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
 
@@ -22,13 +22,13 @@ async def add_comment(
 
         user = await get_current_user(
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"]
+            db=db,
         )
 
         # check recipe exists
         result = await db.execute(
             select(CommunityRecipe).where(
-                CommunityRecipe.id == data.recipe_id
+                CommunityRecipe.id == data.id
             )
         )
 
@@ -42,8 +42,8 @@ async def add_comment(
 
         comment = Comment(
             user_id=user.id,
-            recipe_id=data.recipe_id,
-            content=data.content,
+            recipe_id=data.id,
+            content=data.text,
         )
 
         db.add(comment)
@@ -75,3 +75,20 @@ async def add_comment(
             status_code=500,
             detail="Unexpected error",
         )
+    
+
+@router.get("/{id}")
+async def get_comments(
+    id: int,
+    db: AsyncSession = Depends(get_db),
+):
+
+    result = await db.execute(
+        select(Comment).where(
+            Comment.recipe_id == id
+        )
+    )
+
+    comments = result.scalars().all()
+
+    return comments

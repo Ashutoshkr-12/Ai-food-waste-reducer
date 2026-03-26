@@ -1,7 +1,7 @@
 'use client'
 import { ArrowLeft, Bell, Settings } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
 
 interface HeaderProps {
   title?: string;
@@ -34,10 +34,12 @@ export default function Header({ title, showBack = false, showNotifications = fa
         
         <div className="flex items-center gap-2">
           {showNotifications && (
+            <Link href="/notification">
             <button className="relative p-3 text-gray-600 hover:bg-linear-to-br hover:from-emerald-50 hover:to-green-50 rounded-xl border border-transparent hover:border-emerald-200">
               <Bell className="w-6 h-6" />
               <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-linear-to-br from-red-500 to-orange-600 rounded-full border-2 border-[#FFFCF8] shadow-lg" />
             </button>
+            </Link>
           )}
           {showSettings && (
             <button className="p-3 text-gray-600 hover:bg-linear-to-br hover:from-emerald-50 hover:to-green-50 rounded-xl border border-transparent hover:border-emerald-200">

@@ -9,21 +9,20 @@ from app.models.community_recipe import CommunityRecipe
 from app.schemas.like_schema import LikeCreate
 from app.services.auth.user_service import get_current_user
 from app.services.auth.clerk_auth import get_current_clerkUser
-
+from app.schemas.like_schema import LikeResponse
 
 router = APIRouter()
 
-@router.post("/")
+@router.post("/",response_model=LikeResponse)
 async def like_recipe(
     data: LikeCreate,
     db: AsyncSession = Depends(get_db),
     clerk=Depends(get_current_clerkUser),
 ):
     try:
-
         user = await get_current_user(
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"]
+            db=db
         )
 
         # check recipe exists
@@ -52,19 +51,24 @@ async def like_recipe(
         existing_like = result.scalar_one_or_none()
 
         if existing_like:
-            raise HTTPException(
-                status_code=400,
-                detail="Already liked",
-            )
+    # UNLIKE (remove like)
+            await db.delete(existing_like)
+            if recipe.likes_count > 0:
+                recipe.likes_count -= 1
+            await db.commit()
+            return {
+                "message": "Unliked",
+                "likes_count": recipe.likes_count,
+            }
 
         like = RecipeLike(
-            user_id=user.id,
-            recipe_id=data.recipe_id,
-        )
+                user_id=user.id,
+                recipe_id=data.recipe_id,
+            )
 
         db.add(like)
 
-        # increase count
+            # increase count
         recipe.likes_count += 1
 
         await db.commit()
@@ -84,7 +88,8 @@ async def like_recipe(
             detail="Database error",
         )
 
-    except Exception:
+    except Exception as e:
+        print(e)
         await db.rollback()
         raise HTTPException(
             status_code=500,

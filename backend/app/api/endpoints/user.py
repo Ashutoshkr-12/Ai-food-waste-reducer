@@ -12,13 +12,12 @@ router = APIRouter()
 @router.post("/", response_model=UserResponse)
 async def create_user(
     clerk_id: str,
-    email: str,
     db: AsyncSession = Depends(get_db),
 ):
     return await get_current_user(
         db=db,
         clerk_id=clerk_id,
-        email=email,
+        
     )
 
 @router.get("/me")
@@ -30,7 +29,6 @@ async def get_me(
        
         user = await get_current_user(
             clerk_id=clerk["clerk_id"],
-            email=None,
             db=db,
         )
 

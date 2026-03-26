@@ -7,6 +7,7 @@ asyncpg
 psycopg2-binary
 apscheduler
 google-generativeai
+google-genai
 python-multipart
 python-jose
 httpx
