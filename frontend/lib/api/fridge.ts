@@ -4,9 +4,8 @@ export async function getFridge() {
     return apiFetch("/api/frigde")
 }
 
-
 export async function saveFridge(items: any[], token: string) {
-    return apiFetch("/api/fridge",token,{
+    return apiFetch("/api/fridge/",token,{
         method: "POST",
         headers: {
             "Content-Type": "application/json",

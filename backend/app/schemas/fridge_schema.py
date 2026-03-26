@@ -6,8 +6,7 @@ from datetime import date, datetime
 class FridgeItemCreate(BaseModel):
     name: str
     quantity: int
-    expiry_date: date
-
+    expiry_date: Optional[date]
     source: Optional[str] = "manual"
     scan_id: Optional[int] = None
     image_url: str | None = None

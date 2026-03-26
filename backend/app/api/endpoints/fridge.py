@@ -2,14 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select
-
 from app.config.db import get_db
 from app.models.fridge_items import FridgeItem
 from app.schemas.fridge_schema import FridgeItemsCreate, FridgeItemResponse
-
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
 from app.services.user_stats.stats_service import increase_items_added
+from app.services.cloudinary.cloudinary import upload_result
 
 router = APIRouter()
 
@@ -23,26 +22,26 @@ async def save_items(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-
         user = await get_current_user(
             db=db,
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"]
         )
-
         created = []
 
         for item in data.items:
 
+            if item["image_url"]:
+                image_url = await upload_result(item["image_url"],item["image_url"])
+
             db_item = FridgeItem(
                 user_id=user.id,
-                name=item.name,
+                name=item.title,
                 quantity=item.quantity,
                 expiry_date=item.expiry_date,
                 source=item.source or "manual",
                 scan_id=item.scan_id if item.scan_id else None,
                 status="active",
-                image_url=item.image_url,
+                image_url=image_url,
             )
 
             db.add(db_item)
@@ -91,7 +90,6 @@ async def get_items(
         user = await get_current_user(
             db=db,
             clerk_id=clerk["clerk_id"],
-            email=clerk["email"],
         )
 
         result = await db.execute(

@@ -17,5 +17,3 @@ async def upload_result(
      result = cloudinary.uploader.upload(file_bytes,public_id=fileName)
 
      return result["secure_url"]
-
-

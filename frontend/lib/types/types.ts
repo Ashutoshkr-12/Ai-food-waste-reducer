@@ -52,3 +52,20 @@ export interface UserStats {
   items_added: number;
   waste_reduced: number;
 }
+
+
+export interface Detection  {
+  id?: number;
+  item?: string;
+  title?: string;
+  image_url: string | undefined;
+  expiry_days: any;
+  quantity?: number;
+  confidence?: number;
+  bbox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+};

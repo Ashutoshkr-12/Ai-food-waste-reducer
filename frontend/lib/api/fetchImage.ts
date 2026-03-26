@@ -11,7 +11,6 @@ export async function fetchImage(name: string, token: string){
     }
   );
 
-  const data = await res.json();
 
-  return data.image_url;
+  return res.image_url;
 };

@@ -11,28 +11,19 @@ import Image from "next/image";
 import IngredientCard from "@/components/IngredientCard";
 import { fetchImage } from "@/lib/api/fetchImage";
 import { useRef } from "react";
+import { saveFridge } from "@/lib/api/fridge";
+import { Detection } from "@/lib/types/types";
 
-type Detection = {
-  image_url: string | undefined;
-  expiry_date: any;
-  quantity?: number;
-  item: string;
-  confidence?: number;
-  bbox?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-};
 
 export default function ScanFridge() {
   const navigate = useRouter();
   const { getToken } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [annotated, setAnnotated] = useState<string | null>(null);
   const [items, setItems] = useState<Detection[]>([]);
+  const [scanId, setScanId] = useState<number>()
   const [hasScanned, setHasScanned] = useState(false);
   const [error, setError] = useState("");
   const timerRef = useRef<any>(null);
@@ -61,7 +52,7 @@ export default function ScanFridge() {
         item: "",
         confidence: 0,
         quantity: 1,
-        expiry_date: "",
+        expiry_days: "",
         image_url: "",
       },
     ]);
@@ -83,18 +74,19 @@ export default function ScanFridge() {
   const token = await getToken();
 
   const data = await scanFridge(file, token as string);
+  setScanId(data.id)
 
-  // console.log("API:", data);
+   console.log("API:", data.scan_result);
 
   const merged = mergeDuplicates(
-    data.detections
+    data.scan_result.detections
   ) as Detection[];
 
   setItems(merged || []);
 
-  if (data.annotated_image) {
+  if (data.scan_result.annotated_image) {
     setAnnotated(
-      `data:image/jpeg;base64,${data.annotated_image}`
+      `data:image/jpeg;base64,${data.scan_result.annotated_image}`
     );
   }
 
@@ -157,7 +149,26 @@ function convertToIngredient(item: any) {
 }
 
 const sendItemToFridge = async() => {
+  try {
+    console.log("times:",items)
+    const token = await getToken();
 
+    if(items){
+       const payload = items.map((i) => ({
+      title: i.item,
+      quantity: i.quantity || 1,
+      expiry_date: i.expiry_days,
+      image_url: i.image_url,
+      scan_id: scanId,
+    }))
+    console.log("payload:",payload)
+    await saveFridge(payload,token!);
+    navigate.push("/my-fridge");
+    }
+   
+  } catch (err: any) {
+    setError(err?.message)
+  }
 }
 
   return (
@@ -235,7 +246,6 @@ const sendItemToFridge = async() => {
             <div className="space-y-3">
               {items.map((item, i) => {
                 const ingredient = convertToIngredient(item);
-
                 return( 
                   <IngredientCard key={i} ingredient={ingredient} index={i} onEdit={editItem} />
                 )
@@ -250,14 +260,13 @@ const sendItemToFridge = async() => {
             </div>
             <Button
               className="w-full mt-4"
-              onClick={() => navigate.push("/my-fridge")}
+              onClick={sendItemToFridge}
             >
               Add to fridge
             </Button>
           </div>
         )}
       </div>
-
       <BottomNav />
     </div>
   );

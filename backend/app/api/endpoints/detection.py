@@ -57,7 +57,7 @@ async def detect_food(
         await db.commit()
         await db.refresh(scan)
 
-        return detected_items
+        return scan
 
     except HTTPException:
         raise
