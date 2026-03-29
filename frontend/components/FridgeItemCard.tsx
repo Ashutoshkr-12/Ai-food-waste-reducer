@@ -1,18 +1,21 @@
-import { Ingredient } from "@/lib/types/types";
+import { FridgeItem } from "@/lib/types/types";
 import { Calendar, Edit2, AlertCircle } from "lucide-react";
 
 interface IngredientCardProps {
-  ingredient: Ingredient;
+  ingredient: FridgeItem;
   index?: number;
-  onEdit?: (index: number, field: string, value: any) => void;
 }
 
-export default function IngredientCard({
+export default function FridgeItemCard({
   ingredient,
-  index,
-  onEdit,
 }: IngredientCardProps) {
-  const expiry_days = Number(ingredient.expiry_days)
+
+    const dCurrent = new Date();
+    const dExpiry = new Date(ingredient.expiry_date || 3);
+    const diffTime = dCurrent.getTime() - dExpiry.getTime()
+    const expiry_days = Math.round(diffTime / (1000 * 60 * 60 *24));
+   
+
   // console.log(expiry_days)
   const getBglinear = (daysLeft: number) => {
     if (daysLeft <= 1) return "from-red-50 via-orange-50 to-amber-50";
@@ -57,19 +60,13 @@ export default function IngredientCard({
           </div>
 
           <div className="flex-1 min-w-0">
-            <input
-              className="font-bold border px-2 rounded-2xl text-gray-900 text-xl mb-2 w-full"
-              value={ingredient.title || ingredient.name}
-              onChange={(e) => onEdit!(index!, "item", e.target.value)}
-            />
-            <input
-              type="number"
-              value={ingredient.quantity}
-              onChange={(e) =>
-                onEdit!(index!, "quantity", Number(e.target.value))
-              }
-              className="px-3 py-1 rounded"
-            />
+            <h1
+              className="font-bold border px-2 rounded-2xl text-gray-900 text-xl mb-2 w-full">
+                {ingredient.title || ingredient.name}
+            </h1>
+            <h2 className="px-3 py-1 rounded">
+              {ingredient.quantity}
+            </h2>
           </div>
 
           <button className="p-2.5 bg-[#FFFCF8]/70 backdrop-blur-sm hover:bg-[#FFFCF8] rounded-xl shadow-lg border border-[#FFFCF8]">
@@ -81,7 +78,7 @@ export default function IngredientCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 text-sm font-bold text-gray-700">
               <Calendar className="w-5 h-5" />
-           
+              <h1>
             <span>
         {expiry_days === 0
       ? "Expires today!"
@@ -89,6 +86,7 @@ export default function IngredientCard({
         ? "Expires tomorrow"
         : `${expiry_days} days left`}
           </span>
+          </h1>
             </div>
 
             {expiry_days <= 1 && (

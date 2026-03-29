@@ -14,10 +14,23 @@ export type ScanItem = {
 
 export interface Ingredient {
   id: string;
-  title: string;
+  title?: string;
+  name?: string;
   quantity: string;
-  expiry_date: number; 
-  image_url: string | null;
+  expiry_days?: string ; 
+  image_url: string ;
+  confidence: number | null;
+}
+
+
+
+export interface FridgeItem {
+  id: string;
+  title?: string;
+  name?: string;
+  quantity: string;
+  expiry_date?: Date; 
+  image_url: string ;
   confidence: number | null;
 }
 
@@ -59,7 +72,7 @@ export interface Detection  {
   item?: string;
   title?: string;
   image_url: string | undefined;
-  expiry_days: any;
+  expiry_days: string;
   quantity?: number;
   confidence?: number;
   bbox?: {

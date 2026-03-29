@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus, Search, SlidersHorizontal } from 'lucide-react';
 import  Header  from '@/components/Header';
 import  BottomNav from '@/components/BottomNav';
@@ -7,15 +7,39 @@ import  IngredientCard  from '@/components/IngredientCard';
 import { Button } from '@/components/ui/button';
 import { mockIngredients } from '@/data/mockData';
 import Link from 'next/link';
+import { useAuth } from '@clerk/nextjs';
+import { getFridge } from '@/lib/api/fridge';
+import { Ingredient } from '@/lib/types/types';
+import FridgeItemCard from '@/components/FridgeItemCard';
+
 
 export default function MyFridge() {
   const [filter, setFilter] = useState<'all' | 'expiring'>('all');
-  
-  const filteredIngredients = filter === 'expiring' 
-    ? mockIngredients.filter(i => i.expiresIn <= 3)
-    : mockIngredients;
+  const { getToken } = useAuth();
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const expiringCount = mockIngredients.filter(i => i.expiresIn <= 3).length;
+  useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = await getToken();
+      const data = await getFridge(token!);
+      //  console.log("FRIDGE DATA:", data);
+
+      setIngredients(data);
+
+    } catch (err) {
+      console.log("error fetching fridge:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, []);
+
+{loading && (
+  <div className="text-center">Loading...</div>
+)}
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
@@ -44,7 +68,7 @@ export default function MyFridge() {
             <div className="text-sm text-neutral-600">Total Items</div>
           </div>
           <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
-            <div className="text-2xl font-bold text-amber-900">{expiringCount}</div>
+            <div className="text-2xl font-bold text-amber-900"></div>
             <div className="text-sm text-amber-700">Expiring Soon</div>
           </div>
         </div>
@@ -69,7 +93,7 @@ export default function MyFridge() {
                 : 'bg-white text-neutral-600 border border-neutral-200'
             }`}
           >
-            Expiring ({expiringCount})
+            {/* Expiring ({expiringCount}) */}
           </button>
         </div>
 
@@ -89,8 +113,8 @@ export default function MyFridge() {
 
         {/* Ingredients List */}
         <div className="space-y-3 mb-6">
-          {filteredIngredients.map((ingredient) => (
-            <IngredientCard key={ingredient.id} ingredient={ingredient} />
+          {ingredients.map((ingredient) => (
+            <FridgeItemCard key={ingredient.id} ingredient={ingredient} />
           ))}
         </div>
 

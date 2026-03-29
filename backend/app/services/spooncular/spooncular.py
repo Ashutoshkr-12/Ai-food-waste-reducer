@@ -39,12 +39,34 @@ async def search_product(name: str):
     async with httpx.AsyncClient() as client:
         r = await client.get(url, params=params)
 
-    data = r.json()
+async def search_ingredient(name: str):
+    url = "https://api.spoonacular.com/food/ingredients/search"
 
-    if not data.get("products"):
+    params = {
+        "query": name,
+        "number": 1,
+        "apiKey": API_KEY,
+    }
+
+    async with httpx.AsyncClient() as client:
+        r = await client.get(url, params=params)
+
+    if r.status_code != 200:
+        print("API ERROR:", r.status_code, r.text)
         return None
 
-    return data["products"][0]["image"]
+    data = r.json()
+
+    if "results" not in data or not data["results"]:
+        print("NO RESULTS:", data)
+        return None
+
+    img = data["results"][0].get("image")
+
+    if not img:
+        return None
+
+    return f"https://spoonacular.com/cdn/ingredients_250x250/{img}"
 
 
 async def get_food_image(name: str):

@@ -1,8 +1,6 @@
 import { Clock, ChefHat, Heart } from 'lucide-react';
-import { Recipe, CommunityRecipe } from '@/lib/types/types';
+import { CommunityRecipe } from '@/lib/types/types';
 import Link from 'next/link';
-
-
 
 interface RecipeCardProps {
   recipe:  CommunityRecipe;
@@ -39,7 +37,7 @@ export default function RecipeCard({ recipe, showAuthor = true }: RecipeCardProp
               </span>)}
           </div>
 
-          {10 <= 30 && (
+          {true && (
             <button className="absolute top-4 right-4 p-3 bg-[#FFFCF8]/95 backdrop-blur-sm rounded-2xl hover:bg-[#FFFCF8] shadow-xl">
               <Heart className="w-5 h-5 text-red-500" />
             </button>
@@ -62,7 +60,6 @@ export default function RecipeCard({ recipe, showAuthor = true }: RecipeCardProp
           <h6 className="font-bold text-gray-700 ml-2 mb-4  line-clamp-2 ">
             {recipe.description}
           </h6>
-          
           <div className="flex items-center gap-3 text-sm text-gray-600 mb-5">
             <div className="flex items-center gap-2 bg-linear-to-br from-emerald-50 to-green-50 px-4 py-2 rounded-xl border border-emerald-200">
               <Clock className="w-4 h-4 text-emerald-600" />
@@ -72,14 +69,13 @@ export default function RecipeCard({ recipe, showAuthor = true }: RecipeCardProp
               <ChefHat className="w-4 h-4 text-purple-600" />
               <span className="font-semibold text-gray-700">{recipe.difficulty}</span>
             </div>
-            
           </div>
 
           {showAuthor && isCommunityRecipe && (
             <div className="flex items-center justify-between pt-5 border-t-2 border-gray-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-linear-to-br from-purple-400 to-pink-600 shadow-lg" />
-                <span className="text-sm font-bold text-gray-900">{recipe.author}</span>
+                <span className="text-sm font-bold text-gray-900">user_3B7{recipe.user_id}</span>
               </div>
               <div className="flex items-center gap-4 text-sm">
                 <span className="flex items-center gap-1.5 font-bold bg-linear-to-r from-red-500 to-pink-600 bg-clip-text text-transparent">

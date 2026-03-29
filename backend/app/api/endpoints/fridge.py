@@ -8,7 +8,7 @@ from app.schemas.fridge_schema import FridgeItemsCreate, FridgeItemResponse
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
 from app.services.user_stats.stats_service import increase_items_added
-from app.services.cloudinary.cloudinary import upload_result
+from app.services.cloudinary.cloudinary import upload_from_url
 
 router = APIRouter()
 
@@ -30,12 +30,12 @@ async def save_items(
 
         for item in data.items:
 
-            if item["image_url"]:
-                image_url = await upload_result(item["image_url"],item["image_url"])
+            if item.image_url:
+                image_url = await upload_from_url(item.image_url)
 
             db_item = FridgeItem(
                 user_id=user.id,
-                name=item.title,
+                name=item.name,
                 quantity=item.quantity,
                 expiry_date=item.expiry_date,
                 source=item.source or "manual",
@@ -92,12 +92,14 @@ async def get_items(
             clerk_id=clerk["clerk_id"],
         )
 
+        # print({"result",user})
+
         result = await db.execute(
             select(FridgeItem).where(
                 FridgeItem.user_id == user.id
             )
         )
-
+        # print(f"result",result)
         items = result.scalars().all()
 
         return items

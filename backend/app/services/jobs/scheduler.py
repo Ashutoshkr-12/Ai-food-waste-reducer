@@ -2,7 +2,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from app.services.jobs.expiry_job import mark_expired_items
 
 scheduler = AsyncIOScheduler()
-
 def start_scheduler():
 
     scheduler.add_job(

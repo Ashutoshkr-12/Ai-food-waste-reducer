@@ -17,3 +17,12 @@ async def upload_result(
      result = cloudinary.uploader.upload(file_bytes,public_id=fileName)
 
      return result["secure_url"]
+
+async def upload_from_url(image_url: str):
+
+    result = cloudinary.uploader.upload(
+        image_url,
+        folder="fridge_items"
+    )
+
+    return result["secure_url"]

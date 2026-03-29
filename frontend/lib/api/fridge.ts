@@ -1,7 +1,7 @@
 import { apiFetch } from "./client";
 
-export async function getFridge() {
-    return apiFetch("/api/frigde")
+export async function getFridge(token: string) {
+    return apiFetch("/api/fridge",token)
 }
 
 export async function saveFridge(items: any[], token: string) {

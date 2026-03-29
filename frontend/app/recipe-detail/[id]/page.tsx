@@ -9,9 +9,7 @@ import { useAuth } from '@clerk/nextjs';
 import { likeRecipe } from '@/lib/api/likes';
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -187,7 +185,6 @@ const handleFollowing = () => {
                   )}
 
                    {comments.map((c: any) => (
-                    <>
                     <div
                       key={c.id}
                       className="bg-gray-100 rounded-xl p-3 flex justify-between gap-3"
@@ -200,13 +197,11 @@ const handleFollowing = () => {
                         {c.content}
                       </div>
                       </div>
-                    
-                    
                       <div className="text-sm right-0 text-gray-700">
                         {c.created_at}
                       </div>
                       </div>
-                      </>
+                      
                   ))} 
 
                 </div>

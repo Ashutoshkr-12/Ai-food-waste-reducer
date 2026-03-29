@@ -72,12 +72,10 @@ export default function ScanFridge() {
 
    try {
   const token = await getToken();
-
   const data = await scanFridge(file, token as string);
   setScanId(data.id)
 
-   console.log("API:", data.scan_result);
-
+  console.log("API:", data.scan_result);
   const merged = mergeDuplicates(
     data.scan_result.detections
   ) as Detection[];
@@ -89,7 +87,6 @@ export default function ScanFridge() {
       `data:image/jpeg;base64,${data.scan_result.annotated_image}`
     );
   }
-
 } catch (err: any) {
   setError(err.message);
 }finally {
@@ -127,48 +124,55 @@ const editItem = async (
     }, 600); 
   }
 };
+
 function convertToIngredient(item: any) {
-
-  const today = new Date();
-
-  const expiry = new Date(item.expiry_date);
-
-  const diff = Math.ceil(
-    (expiry.getTime() - today.getTime()) /
-    (1000 * 60 * 60 * 24)
-  );
 
   return {
     id: item.id,
     title: item.item,
     quantity: item.quantity || 1,
-    expiry_date: diff,
+    expiry_days: item.expiry_days,
     image_url: item.image_url,
     confidence: item.confidence,
   };
 }
 
 const sendItemToFridge = async() => {
+  setLoading(true)
   try {
-    console.log("times:",items)
+    // console.log("times:",items)
     const token = await getToken();
+
+    const getExpiryDate = (days: string) => {
+    const d = new Date();
+    const expiryDate = new Date(d)
+    expiryDate.setDate(expiryDate.getDate() + Number(days) );
+    return expiryDate.toISOString().split("T")[0];
+};
 
     if(items){
        const payload = items.map((i) => ({
-      title: i.item,
+      name: i.item,
       quantity: i.quantity || 1,
-      expiry_date: i.expiry_days,
+      expiry_date: getExpiryDate(i.expiry_days),
       image_url: i.image_url,
       scan_id: scanId,
     }))
-    console.log("payload:",payload)
+    // console.log("payload:",payload)
     await saveFridge(payload,token!);
     navigate.push("/my-fridge");
     }
-   
   } catch (err: any) {
     setError(err?.message)
+  } finally{
+    setLoading(false)
   }
+}
+
+if(loading){ 
+  <div className="w-full h-screen flex items-center justify-center">
+    <span className="loader"></span>
+  </div>
 }
 
   return (
@@ -216,7 +220,6 @@ const sendItemToFridge = async() => {
                 fill
                 className="object-cover rounded-2xl"
               />
-
               <div className="absolute inset-0 bg-green-500/20 animate-pulse rounded-2xl" />
             </div>
             <Loader2 className="animate-spin mx-auto" />
@@ -262,7 +265,8 @@ const sendItemToFridge = async() => {
               className="w-full mt-4"
               onClick={sendItemToFridge}
             >
-              Add to fridge
+              {loading ? <>saving to fridge...</> : <>  Add to fridge</>}
+            
             </Button>
           </div>
         )}
