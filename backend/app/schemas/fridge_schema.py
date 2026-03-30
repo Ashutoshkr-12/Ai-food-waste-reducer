@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, datetime
 
-
 class FridgeItemCreate(BaseModel):
     name: str
     quantity: int

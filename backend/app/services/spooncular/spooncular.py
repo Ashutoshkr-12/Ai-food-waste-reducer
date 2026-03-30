@@ -2,7 +2,6 @@ import os
 import httpx
 
 API_KEY = os.getenv("SPOONACULAR_API_KEY")
-
 async def search_ingredient(name: str):
 
     url = "https://api.spoonacular.com/food/ingredients/search"

@@ -5,10 +5,7 @@ from sqlalchemy import select, desc
 import json
 from app.config.db import get_db
 from app.models.community_recipe import CommunityRecipe
-from app.schemas.community_schema import (
-    CommunityRecipeCreate,
-    CommunityRecipeResponse,
-)
+from app.schemas.community_schema import CommunityRecipeResponse
 from app.services.auth.clerk_auth import get_current_clerkUser
 from app.services.auth.user_service import get_current_user
 from app.services.cloudinary.cloudinary import upload_result

@@ -18,7 +18,6 @@ async def get_stats(
     clerk=Depends(get_current_clerkUser),
 ):
     try:
-
         user = await get_current_user(
             db=db,
             clerk_id=clerk["clerk_id"]

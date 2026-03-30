@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import select
 from app.config.db import get_db
 from app.services.recipe_service import get_priority_items
 from app.services.gemini.gemini_recipe import suggest_recipes

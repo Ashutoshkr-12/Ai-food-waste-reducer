@@ -21,9 +21,8 @@ async def get_current_clerkUser(
         credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
     token = credentials.credentials
-
+    
     try:
-        
         jwks = await get_jwks()
 
         payload = jwt.decode(
@@ -36,14 +35,8 @@ async def get_current_clerkUser(
         # print("payload from backend:",payload)
 
         clerk_id = payload.get("sub")
-        email = None
-
-        # if "email_addresses" in payload:
-        #     email = payload["email_addresses"][0]["email_address"]
-
         return {
                 "clerk_id": clerk_id,
-                # "email": email
             }
         
     except Exception as e:

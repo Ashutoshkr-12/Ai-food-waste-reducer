@@ -2,16 +2,13 @@ from sqlalchemy import select
 from app.models.users import User
 from app.models.user_stats import UserStats
 
-
 async def get_current_user(
     db,
     clerk_id,
 ):
-
     result = await db.execute(
         select(User).where(User.clerk_id == clerk_id)
     )
-
     user = result.scalar_one_or_none()
 
     if user:
@@ -32,7 +29,6 @@ async def get_current_user(
     )
 
     db.add(stats)
-
     await db.commit()
     await db.refresh(user)
 

@@ -6,9 +6,7 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from datetime import datetime, timezone
-
 from app.config.db import Base
-
 
 class RecipeLike(Base):
     __tablename__ = "recipe_likes"
@@ -22,21 +20,18 @@ class RecipeLike(Base):
     )
 
     id = Column(Integer, primary_key=True)
-
     user_id = Column(
         Integer,
         ForeignKey("users.id"),
         nullable=False,
         index=True,
     )
-
     recipe_id = Column(
         Integer,
         ForeignKey("community_recipes.id"),
         nullable=False,
         index=True,
     )
-
     created_at = Column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

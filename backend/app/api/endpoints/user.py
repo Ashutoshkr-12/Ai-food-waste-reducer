@@ -31,7 +31,6 @@ async def get_me(
             clerk_id=clerk["clerk_id"],
             db=db,
         )
-
         return user
     
     except HTTPException:

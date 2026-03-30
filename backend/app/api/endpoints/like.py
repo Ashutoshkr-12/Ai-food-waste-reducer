@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
-
 from app.config.db import get_db
 from app.models.recipe_likes import RecipeLike
 from app.models.community_recipe import CommunityRecipe
@@ -67,8 +66,6 @@ async def like_recipe(
             )
 
         db.add(like)
-
-            # increase count
         recipe.likes_count += 1
 
         await db.commit()

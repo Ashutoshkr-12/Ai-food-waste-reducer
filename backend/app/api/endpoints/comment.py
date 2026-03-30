@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import select
-
 from app.config.db import get_db
 from app.models.comments import Comment
 from app.models.community_recipe import CommunityRecipe

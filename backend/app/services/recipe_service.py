@@ -1,8 +1,6 @@
 from datetime import date, timedelta
 from sqlalchemy import select
-
 from app.models.fridge_items import FridgeItem
-
 
 async def get_priority_items(db, user_id):
 

@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 from app.config.db import Base
 
-
 class User(Base):
     __tablename__ = "users"
 
@@ -11,5 +10,4 @@ class User(Base):
     email = Column(String, nullable=True)
     password = Column(String, nullable=True)
     username = Column(String, nullable=True)
-
     created_at = Column(DateTime, default=datetime.utcnow)

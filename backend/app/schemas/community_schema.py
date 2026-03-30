@@ -22,18 +22,13 @@ class CommunityRecipeUpdate(BaseModel):
 class CommunityRecipeResponse(BaseModel):
     id: int
     user_id: int
-
     title: str
     description: str
-
     ingredients: List[str]
     steps: List[str]
-
     image_url: Optional[str]
-
     likes_count: int
     comments_count: int
-
     created_at: datetime
     updated_at: datetime
 
