@@ -1,5 +1,5 @@
 import { FridgeItem } from "@/lib/types/types";
-import { Calendar, Edit2, AlertCircle } from "lucide-react";
+import { Calendar, Trash, AlertCircle } from "lucide-react";
 
 interface IngredientCardProps {
   ingredient: FridgeItem;
@@ -70,7 +70,7 @@ export default function FridgeItemCard({
           </div>
 
           <button className="p-2.5 bg-[#FFFCF8]/70 backdrop-blur-sm hover:bg-[#FFFCF8] rounded-xl shadow-lg border border-[#FFFCF8]">
-            <Edit2 className="w-5 h-5 text-gray-600" />
+            <Trash className="w-5 h-5 text-gray-600" />
           </button>
         </div>
         {/* Expiration Info */}

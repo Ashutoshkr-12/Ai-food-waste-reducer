@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { Plus, Search, SlidersHorizontal } from 'lucide-react';
 import  Header  from '@/components/Header';
 import  BottomNav from '@/components/BottomNav';
-import  IngredientCard  from '@/components/IngredientCard';
 import { Button } from '@/components/ui/button';
 import { mockIngredients } from '@/data/mockData';
 import Link from 'next/link';
@@ -33,7 +32,7 @@ export default function MyFridge() {
     } finally {
       setLoading(false);
     }
-  };
+  }; 
   fetchData();
 }, []);
 
@@ -119,7 +118,7 @@ export default function MyFridge() {
         </div>
 
         {/* Add Item Button */}
-        <Link href="/scan">
+        <Link href="/scan-fridge">
           <button className="fixed bottom-24 right-4 w-14 h-14 rounded-full bg-green-600 text-white shadow-lg hover:bg-green-700 flex items-center justify-center z-30">
             <Plus className="w-6 h-6" />
           </button>
