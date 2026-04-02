@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Button } from './ui/button';
 
 export default function UserRecipeCard( {recipe,i}: {recipe: CachedRecipe; i: number}) {
 
@@ -69,6 +70,7 @@ export default function UserRecipeCard( {recipe,i}: {recipe: CachedRecipe; i: nu
               ))}
             </div>
           </div>
+          <Button className='w-full'>Use this recipe</Button>
           </div>
           </div>
     </AccordionContent>

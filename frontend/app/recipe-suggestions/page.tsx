@@ -23,7 +23,6 @@ useEffect(() => {
       await new Promise(res => setTimeout(res, 200))
       const res = await suggestRecipes(token!);
       console.log("res:", res);
-
       setRecipes(res);
     } catch (err) {
       console.error(err);
@@ -31,7 +30,6 @@ useEffect(() => {
       setLoading(false); 
     }
   };
-
   fetchData();
 }, []);
 

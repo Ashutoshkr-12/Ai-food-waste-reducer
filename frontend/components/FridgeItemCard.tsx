@@ -3,17 +3,20 @@ import { Calendar, Trash, AlertCircle } from "lucide-react";
 
 interface IngredientCardProps {
   ingredient: FridgeItem;
+  handleDelete: (id: number) => void
   index?: number;
 }
 
 export default function FridgeItemCard({
   ingredient,
+  handleDelete
 }: IngredientCardProps) {
 
     const dCurrent = new Date();
     const dExpiry = new Date(ingredient.expiry_date || 3);
     const diffTime = dExpiry.getTime() - dCurrent.getTime()
     const expiry_days = Math.round(diffTime / (1000 * 60 * 60 *24));
+
 
   // console.log(expiry_days)
   const getBglinear = (daysLeft: number) => {
@@ -68,7 +71,7 @@ export default function FridgeItemCard({
             </h2>
           </div>
 
-          <button className="p-2.5 bg-[#FFFCF8]/70 backdrop-blur-sm hover:bg-[#FFFCF8] rounded-xl shadow-lg border border-[#FFFCF8]">
+        <button className="p-2.5 bg-[#FFFCF8]/70 backdrop-blur-sm hover:bg-[#FFFCF8] rounded-xl shadow-lg border border-[#FFFCF8] cursor-pointer" onClick={ () => handleDelete(ingredient.id)}>
             <Trash className="w-5 h-5 text-gray-600" />
           </button>
         </div>

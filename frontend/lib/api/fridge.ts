@@ -13,3 +13,11 @@ export async function saveFridge(items: any[], token: string) {
         body: JSON.stringify({ items }),
     });
 }
+
+export async function deleteItem(id: number,token: string){
+    const res = await apiFetch(`/api/fridge/${id}`,token,{
+        method: "DELETE",
+    })
+
+   return res;
+}

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 
 import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
-import { getFridge } from '@/lib/api/fridge';
+import { deleteItem, getFridge } from '@/lib/api/fridge';
 import { Ingredient } from '@/lib/types/types';
 import FridgeItemCard from '@/components/FridgeItemCard';
 
@@ -35,6 +35,17 @@ export default function MyFridge() {
   }; 
   fetchData();
 }, []);
+
+
+const handleDelete = async (id: number) => {
+  try {
+    const token = await getToken();
+    await deleteItem(id, token!);
+    setIngredients(prev => prev.filter(i => i.id !== id));
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 {loading && (
   <div className="text-center">Loading...</div>
@@ -113,7 +124,7 @@ export default function MyFridge() {
         {/* Ingredients List */}
         <div className="space-y-3 mb-6">
           {ingredients.map((ingredient) => (
-            <FridgeItemCard key={ingredient.id} ingredient={ingredient} />
+            <FridgeItemCard key={ingredient.id} handleDelete={handleDelete} ingredient={ingredient} />
           ))}
         </div>
 

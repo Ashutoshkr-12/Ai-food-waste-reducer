@@ -110,4 +110,34 @@ async def get_items(
             detail="Error fetching fridge items",
         )
 
+@router.delete("/{item_id}")
+async def delete_item(
+    db:AsyncSession=Depends(get_db),
+    clerk=Depends(get_current_clerkUser),
+    item_id = int
+):
+    try:
+        item_id = int(item_id)
+        user = await get_current_user(
+            db=db,
+            clerk_id=clerk["clerk_id"]
+        )
+        item = await db.get(FridgeItem, item_id)
+
+        if not item or item.user_id != user.id:
+            raise HTTPException(
+                status_code=404,
+                detail="Item not found"
+            )
+        await db.delete(item)
+        await db.commit()
+
+        return {"message": "Item deleted successfully"}
+        
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=500,
+            detail="Error deleting item",
+        )
 

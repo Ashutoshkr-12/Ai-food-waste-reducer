@@ -23,7 +23,7 @@ export type CachedRecipe = {
 }
 
 export interface Ingredient {
-  id: string;
+  id: number;
   title?: string;
   name?: string;
   quantity: string;
@@ -33,7 +33,7 @@ export interface Ingredient {
 }
 
 export interface FridgeItem {
-  id: string;
+  id: number;
   title?: string;
   name?: string;
   quantity: string;

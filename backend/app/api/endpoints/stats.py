@@ -11,6 +11,22 @@ from app.services.auth.user_service import get_current_user
 
 router = APIRouter()
 
+@router.post("/use")
+async def use_recipe(
+    db: AsyncSession=Depends(get_db),
+    clerk=Depends(get_current_clerkUser)
+):
+    try:
+        user = await get_current_user(
+            db=db,
+            clerk_id=clerk["clerk_id"]
+        )
+     
+    except SQLAlchemyError:
+        raise HTTPException(
+            status_code=500,
+            detail="Error fetching stats",
+        )
 
 @router.get("/me",response_model=UserStatsResponse)
 async def get_stats(

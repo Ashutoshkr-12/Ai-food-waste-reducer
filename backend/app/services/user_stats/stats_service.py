@@ -33,9 +33,7 @@ async def increase_food_saved(
     user_id: int,
     count: int = 1,
 ):
-
     stats = await get_stats(db, user_id)
-
     stats.food_saved += count
 
     await db.commit()
@@ -48,7 +46,6 @@ async def increase_waste_reduced(
 ):
 
     stats = await get_stats(db, user_id)
-
     stats.waste_reduced += count
 
     await db.commit()
