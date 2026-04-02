@@ -12,9 +12,8 @@ export default function FridgeItemCard({
 
     const dCurrent = new Date();
     const dExpiry = new Date(ingredient.expiry_date || 3);
-    const diffTime = dCurrent.getTime() - dExpiry.getTime()
+    const diffTime = dExpiry.getTime() - dCurrent.getTime()
     const expiry_days = Math.round(diffTime / (1000 * 60 * 60 *24));
-   
 
   // console.log(expiry_days)
   const getBglinear = (daysLeft: number) => {
@@ -89,7 +88,7 @@ export default function FridgeItemCard({
           </h1>
             </div>
 
-            {expiry_days <= 1 && (
+             {expiry_days <= 7 && (
               <div className="flex items-center gap-1.5 bg-linear-to-r from-red-500 to-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg">
                 <AlertCircle className="w-4 h-4" />
                 Urgent

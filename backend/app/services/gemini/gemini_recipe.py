@@ -24,20 +24,20 @@ Suggest 3 recipes.
 
 Each recipe must include:
 - title
+- search_query (for image search)
 - ingredients
 - steps
 - time_minutes
-- image_url (real food image url from internet)
 
 Return ONLY JSON.
 
 [
   {{
     "title": "",
+    "search_query": "",
     "ingredients": [],
     "steps": [],
     "time_minutes": 10,
-    "image_url": ""
   }}
 ]
 """

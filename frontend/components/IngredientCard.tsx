@@ -81,22 +81,20 @@ export default function IngredientCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5 text-sm font-bold text-gray-700">
               <Calendar className="w-5 h-5" />
-           
-            <span>
-        {expiry_days === 0
-      ? "Expires today!"
-      : expiry_days === 1
-        ? "Expires tomorrow"
-        : `${expiry_days} days left`}
+          <span>
+            <div className="flex items-center">
+              <input
+                type="number"
+                value={expiry_days}
+                onChange={(e) =>
+                  onEdit!(index!, "expiry_days", Number(e.target.value))
+                }
+                className="w-14 px-2 border rounded-full"
+              />
+              <span>days left</span>
+            </div>
           </span>
             </div>
-
-            {expiry_days <= 1 && (
-              <div className="flex items-center gap-1.5 bg-linear-to-r from-red-500 to-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg">
-                <AlertCircle className="w-4 h-4" />
-                Urgent
-              </div>
-            )}
           </div>
 
           {/* Progress Bar */}

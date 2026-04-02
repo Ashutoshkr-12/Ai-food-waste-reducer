@@ -6,7 +6,7 @@ import  BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
 import { mockIngredients } from '@/data/mockData';
 
-export function CookSpecific() {
+export default function CookSpecific() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRecipe, setSelectedRecipe] = useState<string | null>(null);
 

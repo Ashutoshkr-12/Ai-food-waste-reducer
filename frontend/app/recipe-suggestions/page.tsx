@@ -1,13 +1,39 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Sparkles, SlidersHorizontal, Search } from 'lucide-react';
 import  Header  from '@/components/Header';
 import  BottomNav  from '@/components/BottomNav';
-import  RecipeCard  from '@/components/RecipeCard';
-import {  mockRecipes } from '@/data/mockData';
+import { suggestRecipes } from '@/lib/api/recipes';
+import { useAuth } from '@clerk/nextjs';
+import UserRecipeCard from '@/components/UserRecipeCard';
+import { CachedRecipe } from '@/lib/types/types';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 export default function RecipeSuggestions() {
+  const { getToken } = useAuth();
+  const [recipe, setRecipes] = useState<CachedRecipe[]>([])
+  const [loading, setLoading] = useState(true)
   const [prioritizeExpiring, setPrioritizeExpiring] = useState(true);
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const token = await getToken();
+      await new Promise(res => setTimeout(res, 200))
+      const res = await suggestRecipes(token!);
+      console.log("res:", res);
+
+      setRecipes(res);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false); 
+    }
+  };
+
+  fetchData();
+}, []);
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-20">
@@ -23,7 +49,7 @@ export default function RecipeSuggestions() {
             <h2 className="font-semibold text-lg">AI-Powered Recipes</h2>
           </div>
           <p className="text-green-100 text-sm">
-            Based on your current fridge inventory, we've found {mockRecipes.length} perfect recipes for you
+            Based on your current fridge inventory, we've found {recipe.length} perfect recipes for you
           </p>
         </div>
 
@@ -80,13 +106,23 @@ export default function RecipeSuggestions() {
         </div>
 
         {/* Recipe Grid */}
-        <div className="grid gap-4 mb-6">
-          {mockRecipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} />
-          ))}
-        </div>
+        {loading ?  
+     <div className="grid gap-4 mb-6">
+    {[1,2,3].map((_, i) => (
+      <div key={i} className="p-4 border rounded-xl">
+        <Skeleton className="h-40 w-full mb-3" />
+        <Skeleton className="h-4 w-3/4 mb-2" />
+        <Skeleton className="h-4 w-1/2" />
       </div>
-
+    ))}
+  </div>
+  : 
+  <div className="grid gap-4 mb-6">
+          {recipe.map((recipe,i) => (
+            <UserRecipeCard key={i} recipe={recipe} i={i} />
+          ))}
+        </div> }
+      </div>
       <BottomNav />
     </div>
   );

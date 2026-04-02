@@ -4,7 +4,7 @@ import { Plus, Search, SlidersHorizontal } from 'lucide-react';
 import  Header  from '@/components/Header';
 import  BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
-import { mockIngredients } from '@/data/mockData';
+
 import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
 import { getFridge } from '@/lib/api/fridge';
@@ -63,7 +63,7 @@ export default function MyFridge() {
         {/* Stats */}
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="bg-white rounded-2xl p-4 border border-neutral-200">
-            <div className="text-2xl font-bold text-neutral-900">{mockIngredients.length}</div>
+            <div className="text-2xl font-bold text-neutral-900">{ingredients.length}</div>
             <div className="text-sm text-neutral-600">Total Items</div>
           </div>
           <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200">
@@ -82,7 +82,7 @@ export default function MyFridge() {
                 : 'bg-white text-neutral-600 border border-neutral-200'
             }`}
           >
-            All Items ({mockIngredients.length})
+            All Items ({ingredients.length})
           </button>
           <button
             onClick={() => setFilter('expiring')}
@@ -92,7 +92,7 @@ export default function MyFridge() {
                 : 'bg-white text-neutral-600 border border-neutral-200'
             }`}
           >
-            {/* Expiring ({expiringCount}) */}
+            Expiring 
           </button>
         </div>
 

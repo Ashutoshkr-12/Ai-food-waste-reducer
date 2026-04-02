@@ -13,7 +13,7 @@ async def get_image(data: ImageRequest):
         return
     
     img = await get_food_image(data.name)
-
-    return {
+    if img:
+         return {
         "image_url": img
-    }
+        }

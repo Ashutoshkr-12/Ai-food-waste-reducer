@@ -10,11 +10,8 @@ async def get_priority_items(db, user_id):
             FridgeItem.status == "active",
         )
     )
-
     items = result.scalars().all()
-
     today = date.today()
-
     def priority(item):
         if item.expiry_date <= today:
             return 0

@@ -1,14 +1,12 @@
 "use client"
-import { Settings, Award, BookOpen, Share2, TrendingDown, ChefHat } from 'lucide-react';
+import { Settings, Award, BookOpen, Share2, TrendingDown } from 'lucide-react';
 import  Header  from '@/components/Header';
 import  BottomNav  from '@/components/BottomNav';
-import { Button } from '@/components/ui/button';
-import { userStats, mockRecipes } from '@/data/mockData';
 import Link from 'next/link';
 import { useAuth } from '@clerk/nextjs';
 import { getMeStats } from '@/lib/api/stats';
 import { useEffect, useState } from 'react';
-import { User, UserStats } from '@/lib/types/types';
+import { mockRecipes, User, UserStats } from '@/lib/types/types';
 import { getMe } from '@/lib/api/user';
 import { getMyRecipes } from '@/lib/api/community';
 
@@ -141,7 +139,7 @@ if (loading) {
               <div className="text-xs text-green-100 mt-1">Saved</div>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 text-center">
-              <div className="text-2xl font-bold">{userStats.sharedRecipesCount}</div>
+              <div className="text-2xl font-bold">3</div>
               <div className="text-xs text-green-100 mt-1">Shared</div>
             </div>
           </div>
@@ -238,16 +236,16 @@ if (loading) {
               <Link key={recipe.id} href={`/recipe/${recipe.id}`}>
                 <div className="bg-white rounded-2xl overflow-hidden border border-neutral-200 flex gap-3 hover:shadow-lg transition-shadow">
                   <img 
-                    src={recipe.image} 
-                    alt={recipe.name}
+                    src={recipe.image_url} 
+                    alt={recipe.title}
                     className="w-24 h-24 object-cover"
                   />
                   <div className="flex-1 p-3">
                     <h4 className="font-medium text-neutral-900 mb-1 line-clamp-1">
-                      {recipe.name}
+                      {recipe.title}
                     </h4>
                     <div className="flex items-center gap-3 text-sm text-neutral-600">
-                      <span>{recipe.cookTime} min</span>
+                      <span>20 min</span>
                       <span>•</span>
                       <span>{recipe.difficulty}</span>
                     </div>

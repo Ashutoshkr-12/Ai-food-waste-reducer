@@ -1,13 +1,12 @@
 import { Camera, Sparkles, AlertCircle, Users, TrendingDown, Leaf, ChefHat, Clock, Star } from 'lucide-react';
 import  BottomNav  from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
-import { mockIngredients, userStats } from '@/data/mockData';
 import Link from 'next/link';
 import { getMe } from '@/lib/api/user';
 import Header from '@/components/Header';
 
 export default function Dashboard() {
-  const expiringIngredients = mockIngredients.filter(i => i.expiresIn <= 2);
+ // const expiringIngredients = mockIngredients.filter(i => i.expiresIn <= 2);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-green-50 to-teal-50 pb-24">
@@ -44,22 +43,7 @@ export default function Dashboard() {
                 <p className="text-sm text-emerald-100">Keep up the great work!</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-[#FFFCF8]/10 backdrop-blur-sm rounded-[1.5rem] p-5 border-2 border-[#FFFCF8]/20">
-                <div className="text-5xl font-bold mb-2">{userStats.weeklyFoodSaved}</div>
-                <div className="text-emerald-50 font-semibold mb-3">kg Saved</div>
-                <div className="h-2 bg-[#FFFCF8]/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-linear-to-r from-[#FFFCF8]/60 to-[#FFFCF8]/90 rounded-full w-3/4" />
-                </div>
-              </div>
-              <div className="bg-[#FFFCF8]/10 backdrop-blur-sm rounded-[1.5rem] p-5 border-2 border-[#FFFCF8]/20">
-                <div className="text-5xl font-bold mb-2">{userStats.wasteReductionScore}%</div>
-                <div className="text-emerald-50 font-semibold mb-3">Less Waste</div>
-                <div className="h-2 bg-[#FFFCF8]/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-linear-to-r from-[#FFFCF8]/60 to-[#FFFCF8]/90 rounded-full w-5/6" />
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </header>
@@ -101,7 +85,7 @@ export default function Dashboard() {
                   <Clock className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-900 mb-1 text-lg">Save Food</h3>
-                <p className="text-sm font-bold bg-linear-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">{expiringIngredients.length} expiring</p>
+                <p className="text-sm font-bold bg-linear-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent"> expiring</p>
               </div>
             </div>
           </Link>
@@ -121,7 +105,7 @@ export default function Dashboard() {
         </div>
 
         {/* Expiring Alert with linear */}
-        {expiringIngredients.length > 0 && (
+        {2 > 0 && (
           <div className="relative bg-linear-to-br from-red-500 via-orange-500 to-amber-500 text-white rounded-[2rem] p-7 mb-6 shadow-2xl overflow-hidden">
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute top-0 right-0 w-48 h-48 bg-linear-to-br from-orange-400 to-amber-300 rounded-full mix-blend-overlay filter blur-3xl opacity-50" />
@@ -134,9 +118,9 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <h3 className="font-bold text-xl mb-2">⚠️ Action Needed!</h3>
                   <p className="text-red-50 mb-5 text-lg">
-                    {expiringIngredients.length} ingredients need attention - cook them today!
+                    5 ingredients need attention - cook them today!
                   </p>
-                  <Link href="/save-expiring">
+                  <Link href="/my-fridge">
                     <Button className="w-full bg-[#FFFCF8] text-red-600 hover:bg-red-50 rounded-[1.25rem] font-bold h-14 shadow-xl text-lg">
                       Save Food Now →
                     </Button>
@@ -162,7 +146,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-3 gap-4 mb-6">
-            {mockIngredients.slice(0, 3).map((ingredient, index) => (
+            {/* {mockIngredients.slice(0, 3).map((ingredient, index) => ( 
               <div key={ingredient.id} className="text-center">
                 <div className={`relative w-full aspect-square rounded-[1.25rem] ${
                   ingredient.expiresIn <= 1 ? 'bg-linear-to-br from-red-50 to-orange-50 border-2 border-red-200' :
@@ -182,12 +166,12 @@ export default function Dashboard() {
                 <p className="text-sm font-bold text-gray-900 line-clamp-1 mb-1">{ingredient.name}</p>
                 <p className="text-xs font-semibold text-gray-600">{ingredient.expiresIn}d left</p>
               </div>
-            ))}
+            ))} */}
           </div>
 
           <Link href="/my-fridge">
             <Button variant="outline" className="w-full rounded-[1.25rem] border-3 border-emerald-500 text-emerald-700 hover:bg-emerald-50 font-bold h-14 text-base">
-              Manage {mockIngredients.length} Items
+              Manage  Items
             </Button>
           </Link>
         </div>
