@@ -1,11 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { Plus, TrendingUp, Clock, Users } from 'lucide-react';
 import Header  from '@/components/Header';
 import BottomNav  from '@/components/BottomNav';
 import RecipeCard  from '@/components/RecipeCard';
 import { Button } from '@//components/ui/button';
-import { mockCommunityRecipes } from '@/data/mockData';
 import ShareRecipe from '@/components/ShareRecipe';
 import { getCommunityRecipe } from '@/lib/api/community';
 

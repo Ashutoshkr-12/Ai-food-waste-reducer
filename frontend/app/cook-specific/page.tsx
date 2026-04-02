@@ -4,7 +4,7 @@ import { Search, Check, X } from 'lucide-react';
 import  Header  from '@/components/Header';
 import  BottomNav from '@/components/BottomNav';
 import { Button } from '@/components/ui/button';
-import { mockIngredients } from '@/data/mockData';
+import { mockIngredients } from '@/data/Data';
 
 export default function CookSpecific() {
   const [searchQuery, setSearchQuery] = useState('');
