@@ -5,22 +5,16 @@ import Header from "@/components/Header";
 
 const dummyItems = [
   {
-    id: 1,
-    name: "Milk",
-    expiry_date: "2026-03-27",
-    image_url: "https://t4.ftcdn.net/jpg/05/35/38/81/360_F_535388138_vrJV0SoQBPc6oUyHeIFQkw8nFaH1GP3O.jpg"
-  },
-  {
     id: 2,
     name: "Tomato",
-    expiry_date: "2026-03-28",
+    expiry_date: "2026-04-07",
     image_url: "https://t4.ftcdn.net/jpg/05/72/95/29/360_F_572952963_YNVwHoPX0FWaENu6jShGiYpIICS3W1cc.jpg"
   },
   {
-    id: 3,
-    name: "Cheese",
-    expiry_date: "2026-03-26",
-    image_url: "https://images.unsplash.com/photo-1683314573422-649a3c6ad784?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hlZXNlfGVufDB8fDB8fHww"
+    id: 1,
+    name: "Pineapple",
+    expiry_date: "2026-04-09",
+    image_url: "https://plus.unsplash.com/premium_photo-1724255994628-dceb76a829e8?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   },
 ];
 
