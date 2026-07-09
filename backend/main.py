@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.services.jobs.scheduler import start_scheduler, stop_scheduler
 import os
 
+FRONTEND_URI = ['https://ai-food-waste-reducer.vercel.app/']
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,12 +22,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [None] 
+origins = [FRONTEND_URI] 
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 from fastapi.exceptions import RequestValidationError
