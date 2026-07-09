@@ -75,7 +75,7 @@ export default function ScanFridge() {
   const data = await scanFridge(file, token as string);
   setScanId(data.id)
 
-  console.log("API:", data.scan_result);
+  // console.log("API:", data.scan_result);
   const merged = mergeDuplicates(
     data.scan_result.detections
   ) as Detection[];
