@@ -9,8 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.services.jobs.scheduler import start_scheduler, stop_scheduler
 import os
 
-FRONTEND_URI = ['https://ai-food-waste-reducer.vercel.app/']
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
@@ -22,7 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [FRONTEND_URI] 
+origins = os.getenv('FRONTEND_URL') 
 
 app.add_middleware(
     CORSMiddleware,
