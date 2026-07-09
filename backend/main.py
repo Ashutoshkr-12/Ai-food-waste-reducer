@@ -9,7 +9,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.services.jobs.scheduler import start_scheduler, stop_scheduler
 import os
 
-FRONTEND_URI = os.getenv("*")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -22,7 +21,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-origins = [FRONTEND_URI] 
+origins = [None] 
 
 app.add_middleware(
     CORSMiddleware,
